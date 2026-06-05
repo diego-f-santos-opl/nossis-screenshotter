@@ -118,6 +118,7 @@ PACKAGES=(
     "playwright"    # automação de browser
     "Pillow"        # análise de imagem e geração de PDF
     "rich"          # terminal com cores, menus e barras de progresso
+    "numpy"         # comparação visual entre execuções (--compare)
 )
 
 for pkg in "${PACKAGES[@]}"; do
@@ -218,6 +219,16 @@ cat > "$WRAPPER_DIR/autoscreen" << EOF
 #!/usr/bin/env bash
 # AutoScreen v7.1 — wrapper global
 # Gerado automaticamente por install.sh
+
+# Informa ao script onde ele está instalado (resolve SESSION_DIR e LOG_DIR)
+export AUTOSCREEN_HOME="$INSTALL_DIR"
+
+# Garante que o Playwright/Chromium está instalado para este usuário
+# (Playwright armazena o browser por usuário, não globalmente)
+if [ ! -d "\$HOME/.cache/ms-playwright" ] && [ ! -d "\$HOME/snap/chromium" ]; then
+    $PY -m playwright install chromium --quiet 2>/dev/null || true
+fi
+
 exec $PY $TARGET_SCRIPT "\$@"
 EOF
 
@@ -251,6 +262,9 @@ $PY -c "from PIL import Image; print('ok')" 2>/dev/null \
 
 $PY -c "from rich.console import Console; print('ok')" 2>/dev/null \
     | grep -q ok && ok "rich" || { warn "rich não disponível — modo texto simples"; }
+
+$PY -c "import numpy; print('ok')" 2>/dev/null \
+    | grep -q ok && ok "numpy (--compare)" || { warn "numpy não disponível — --compare não funcionará"; }
 
 $PY -c "
 from playwright.sync_api import sync_playwright
@@ -298,8 +312,8 @@ if [ "$ERRORS" -eq 0 ]; then
     echo -e "    Sessões : ${CYAN}$INSTALL_DIR/.nossis_sessions/${RESET}"
     echo ""
     if [ "$GLOBAL_INSTALL" = true ]; then
-        echo -e "  ${BOLD}Nota:${RESET} Outros usuários precisam rodar Playwright Chromium uma vez:"
-        echo -e "    ${CYAN}python3 -m playwright install chromium${RESET}"
+        echo -e "  ${BOLD}Nota:${RESET} O wrapper instala Chromium automaticamente para cada novo usuário."
+        echo -e "  Para forçar manualmente: ${CYAN}python3 -m playwright install chromium${RESET}"
     fi
 else
     echo -e "  ${YELLOW}${BOLD}⚠ Instalação concluída com $ERRORS erro(s).${RESET}"

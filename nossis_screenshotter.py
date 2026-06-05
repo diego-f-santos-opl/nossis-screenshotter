@@ -46,7 +46,7 @@
 ║    ex: python3 nossis_screenshotter.py int --since nossis_prints_int_1.0.7 ║
 ║                                                                  ║
 ║  Autor     : Diego Santos <diego-f-santos@openlabs.com.br>       ║
-║  Versão    : 7.0                                                 ║
+║  Versão    : 7.1                                                 ║
 ║                                                                  ║
 ╠══════════════════════════════════════════════════════════════════╣
 ║  CHANGELOG                                                       ║
@@ -715,8 +715,15 @@ def _new_optimized_context(browser, session_data: dict | None = None):
     ctx.route("**/*", _route_handler)
     return ctx
 
+# ── Diretório base de instalação ─────────────────────────────────
+# Quando instalado via install.sh, a variável AUTOSCREEN_HOME aponta
+# para /opt/autoscreen (ou ~/autoscreen em instalação local).
+# Fora disso (ex: run direto do git clone), usa o diretório do script.
+import os as _os
+_BASE_DIR = Path(_os.environ.get("AUTOSCREEN_HOME", Path(__file__).parent))
+
 # Arquivo de sessão salva
-SESSION_DIR = Path(".nossis_sessions")
+SESSION_DIR = _BASE_DIR / ".nossis_sessions"
 SESSION_TTL = 30 * 60  # 30 minutos — renova login automaticamente após esse tempo
 
 # Indicadores de página com erro/branca/login
@@ -734,7 +741,7 @@ log: logging.Logger = logging.getLogger("nossis")
 
 
 def setup_logger(env_key: str):
-    log_dir = Path("logs")
+    log_dir = _BASE_DIR / "logs"
     log_dir.mkdir(exist_ok=True)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     log_file  = log_dir / f"nossis_{env_key}_{timestamp}.log"
@@ -848,13 +855,13 @@ def _show_banner():
     if not RICH:
         return
     banner_text = (
-        "[bold cyan]    ___         __       _____                                [/bold cyan]\n"
+        "[bold cyan]    ___         __       _____                            [/bold cyan]\n"
         "[bold cyan]   /   | __  __/ /_____ / ___/_____________  ___  ____        [/bold cyan]\n"
         "[bold cyan]  / /| |/ / / / __/ __ \\__ \\/  ___/ ___/ _ \\/ _ \\/ __ \\  [/bold cyan] \n"
         "[bold cyan] / ___ / /_/ / /_/ /_/ /__/ / /__/ /  /  __/  __/ / / /       [/bold cyan]\n"
         "[bold cyan]/_/  |_\\__,_/\\__/\\____/____/\\___/_/   \\___/\\___/_/ /_/   [/bold cyan]\n"
         "\n"
-        "[bold white]AutoScreen[/bold white] [dim]v7.1  ·  Diego Santos · diego-f-santos@openlabs.com.br[/dim]"
+        "[bold white]AutoScreen[/bold white] [dim]v7.1  ·  Dieg Santos · diego-f-santos@openlabs.com.br[/dim]"
     )
     W = 120
     console.print()
@@ -869,7 +876,7 @@ def _pick_system() -> tuple[str, dict]:
     if RICH:
         W = 120
         table = Table(box=box.ROUNDED, border_style="cyan", show_header=True,
-                      header_style="bold cyan", padding=(0, 2), show_lines=True, width=W)
+                      header_style="bold cyan", padding=(0, 2) show_lines=True, width=W)
         table.add_column("#",       style="bold white",  justify="center", width=5,  no_wrap=True)
         table.add_column("Chave",   style="bold yellow", justify="center", width=10, no_wrap=True)
         table.add_column("Sistema", style="white",       justify="left",   width=40, no_wrap=True)
@@ -897,13 +904,13 @@ def _pick_system() -> tuple[str, dict]:
                 console.print("[red]Opção inválida.[/red]")
             except KeyboardInterrupt:
                 console.print("\n[dim]Interrompido.[/dim]"); sys.exit(0)
-    else:
+  :
         print("\n┌──────────────────────────────────────────┐")
         print("│   Selecione o sistema                     │")
         print("├──────────────────────────────────────────┤")
         for i, (k, s) in enumerate(SYSTEMS.items(), 1):
             print(f"│  {i}. {k.upper():<8}  {s['name']:<28} │")
-        print("│  0.  Sair                                 │")
+        print("â                                 │")
         print("└──────────────────────────────────────────┘")
         while True:
             try:
@@ -912,8 +919,7 @@ def _pick_system() -> tuple[str, dict]:
                 if 1 <= idx <= len(sys_keys):
                     k = sys_keys[idx - 1]
                     return k, SYSTEMS[k]
-            except (ValueError, EOFError): pass
-            except KeyboardInterrupt: sys.exit(0)
+            except (ValueError, EOFErr          except KeyboardInterrupt: sys.exit(0)
             print("Opção inválida.")
 
 
@@ -926,14 +932,13 @@ def _pick_module(sys_key: str, system: dict) -> tuple[str, dict]:
         console.print()
         table = Table(box=box.ROUNDED, border_style="cyan", show_header=True,
                       header_style="bold cyan", padding=(0, 2), show_lines=True, width=W)
-        table.add_column("#",       style="bold white",  justify="center", width=5,  no_wrap=True)
+        table.add_co("#",       style="bold white",  justify="center", width=5,  no_wrap=True)
         table.add_column("Módulo",  style="bold yellow", justify="center", width=14, no_wrap=True)
         table.add_column("Nome",    style="white",       justify="left",   width=20, no_wrap=True)
         table.add_column("Portal",  style="cyan",        justify="left",   width=71, no_wrap=True)
 
         for i, (k, m) in enumerate(system["modules"].items(), 1):
-            table.add_row(str(i), k.upper(), m["name"], m["portal_url"])
-        table.add_section()
+            table.add_row(str(i), k.upper(), m["name"], m["portal_url"])        table.add_section()
         table.add_row("[dim]0[/dim]", "[dim]TODOS[/dim]", "[dim]Capturar todos os módulos[/dim]", "")
         table.add_row("[dim]V[/dim]", "[dim]---[/dim]",   "[dim]Voltar[/dim]", "")
         console.print(table)
@@ -944,7 +949,7 @@ def _pick_module(sys_key: str, system: dict) -> tuple[str, dict]:
                 choice = Prompt.ask(
                     f"[bold cyan]Selecione o módulo[/bold cyan] [dim](0=todos, V=voltar, 1-{len(mod_keys)})[/dim]",
                     default="1"
-                ).strip().lower()
+                ).str().lower()
 
                 if choice == "v":
                     return "__back__", {}
@@ -955,7 +960,7 @@ def _pick_module(sys_key: str, system: dict) -> tuple[str, dict]:
                 if 1 <= idx <= len(mod_keys):
                     k = mod_keys[idx - 1]
                     m = system["modules"][k]
-                    console.print(f"\n[green]✓[/green] [bold]{m['name']}[/bold] — {system['name']}\n")
+                    console.print(f"\n[green]✓[/green] [bold]{m['name']}[] — {system['name']}\n")
                     return k, m
                 console.print(f"[red]Opção inválida.[/red]")
             except (ValueError, EOFError):
@@ -964,14 +969,14 @@ def _pick_module(sys_key: str, system: dict) -> tuple[str, dict]:
                 console.print("\n[dim]Interrompido.[/dim]"); sys.exit(0)
     else:
         print(f"\n  Sistema: {system['name']}")
-        print("┌──────────────────────────────────────────┐")
+        print("┌────────────────────────────────┐")
         print("│   Selecione o módulo                      │")
         print("├──────────────────────────────────────────┤")
         for i, (k, m) in enumerate(system["modules"].items(), 1):
             print(f"│  {i}. {k.upper():<12}  {m['portal_url']:<26} │")
         print("│  0.  Todos os módulos                     │")
         print("│  V.  Voltar                               │")
-        print("└──────────────────────────────────────────┘")
+        prin──────────────────────────────────┘")
         while True:
             try:
                 choice = input(f"\nOpção [0-{len(mod_keys)}/V]: ").strip().lower()
@@ -981,7 +986,7 @@ def _pick_module(sys_key: str, system: dict) -> tuple[str, dict]:
                 if 1 <= idx <= len(mod_keys):
                     k = mod_keys[idx - 1]
                     return k, system["modules"][k]
-            except (ValueError, EOFError): pass
+    except (ValueError, EOFError): pass
             except KeyboardInterrupt: sys.exit(0)
             print("Opção inválida.")
 
@@ -993,7 +998,7 @@ def select_environment(args) -> tuple[str, dict]:
     """
     # ── CLI direto ───────────────────────────────────────────────
     if args.env:
-        key = args.env.lower().strip()
+        key = alower().strip()
 
         # Formato "hml-netwin" ou "hml netwin" (módulo especificado)
         for sep in ["-", " "]:
@@ -1005,7 +1010,7 @@ def select_environment(args) -> tuple[str, dict]:
                     env_key = f"{sys_key}-{mod_key}"
                     return env_key, ENVIRONMENTS[env_key]
 
-        # Formato "hml" (só sistema → usa primeiro módulo)
+        # Formato "hml" (só sistema → usa primeiro mÃ
         if key in SYSTEMS:
             first_mod = next(iter(SYSTEMS[key]["modules"]))
             env_key   = f"{key}-{first_mod}"
@@ -1018,7 +1023,7 @@ def select_environment(args) -> tuple[str, dict]:
         available = list(SYSTEMS.keys()) + list(ENVIRONMENTS.keys())
         if RICH:
             console.print(f"[red]❌ '{key}' não encontrado.[/red]")
-            console.print(f"   Disponíveis: [cyan]{', '.join(available)}[/cyan]")
+            console.print(f"   Dispveis: [cyan]{', '.join(available)}[/cyan]")
         else:
             print(f"❌ '{key}' não encontrado. Disponíveis: {', '.join(available)}")
         sys.exit(1)
@@ -1031,7 +1036,7 @@ def select_environment(args) -> tuple[str, dict]:
         mod_key, module = _pick_module(sys_key, system)
 
         if mod_key == "__back__":
-            continue  # volta para seleção de sistema
+            continue a seleção de sistema
 
         if mod_key == "__all__":
             # Retorna o primeiro módulo mas sinaliza para rodar todos
@@ -1045,15 +1050,14 @@ def select_environment(args) -> tuple[str, dict]:
         return env_key, ENVIRONMENTS[env_key]
 
 
-# ══════════════════════════════════════════════════════════════════
+# ══════════â══════════════════════════════════════════════
 # UTILITÁRIOS
 # ══════════════════════════════════════════════════════════════════
 
 def sanitize(text: str) -> str:
     text = re.sub(r'[\\/:*?"<>|]', "_", text)
     text = re.sub(r'\s+', "_", text.strip())
-    return text[:80] or "pagina"
-
+    return text[:80] or "pagin
 
 def should_skip(label: str, url: str, portal_url: str) -> bool:
     if url.rstrip("/") == portal_url.rstrip("/"): return True
@@ -1070,7 +1074,7 @@ LOADING_TEXTS = [
     "Carregando conteúdo",
     "Carregando...",
     "Carregando",
-    "Aguarde, por favor",
+    "Aguar por favor",
     "Por favor aguarde",
     "Loading",
 ]
@@ -1090,7 +1094,7 @@ def is_page_loading(page: Page) -> str | None:
     return None
 
 
-def wait_for_page_ready(page: Page, label: str = "", extra_on_loading: int = 3000):
+def wait_for_page_ready(page: Page, label: st= "", extra_on_loading: int = 3000):
     """
     Aguarda a página estar pronta de forma inteligente:
     - Espera todos os textos de loading sumirem (até 45s)
@@ -1102,7 +1106,7 @@ def wait_for_page_ready(page: Page, label: str = "", extra_on_loading: int = 300
     for text in LOADING_TEXTS:
         try:
             el = page.query_selector(f"text={text}")
-            if el and el.is_visible():
+            if el and el.ile():
                 page.wait_for_selector(f"text={text}", state="hidden", timeout=45_000)
                 page.wait_for_timeout(300)
                 waited_for_spinner = True
@@ -1115,7 +1119,7 @@ def wait_for_page_ready(page: Page, label: str = "", extra_on_loading: int = 300
     # Wait extra para páginas configuradas
     extra = next((ms for key, ms in EXTRA_WAIT.items() if key.lower() in label.lower()), 0)
     if extra:
-        print_info(f"+{extra//1000}s extra para '{label}'...")
+        print_info(f"+{extra//1000}s extra para '{lbel}'...")
         page.wait_for_timeout(extra)
 
 
@@ -1133,7 +1137,7 @@ def _analyze_image(filepath: Path) -> tuple[bool, str]:
     Retorna (ok, motivo).
 
     Técnicas usadas:
-    - Uniformidade de cor: página branca/cinza sólida = não carregou
+    - Uniformidade de cor: página ba/cinza sólida = não carregou
     - Variância de pixel: imagem com pouca variação = provavelmente vazia
     - Detecção de cor dominante: se >90% da imagem for de uma única cor = suspeito
     - Detecção de spinner circular: analisa região central buscando padrão radial
@@ -1145,7 +1149,7 @@ def _analyze_image(filepath: Path) -> tuple[bool, str]:
         if not filepath.exists() or filepath.stat().st_size < 5_000:
             return False, "Arquivo muito pequeno ou inexistente"
 
-        img = _Img.open(filepath).convert("RGB")
+   Img.open(filepath).convert("RGB")
         w, h = img.size
 
         # ── A. Variância geral da imagem ────────────────────────
@@ -1154,7 +1158,7 @@ def _analyze_image(filepath: Path) -> tuple[bool, str]:
         # stddev de cada canal R, G, B
         stddev_avg = sum(stat.stddev) / 3
         if stddev_avg < 3:  # só marca se for quase completamente uniforme
-            return False, f"Imagem sem variacao (stddev={stddev_avg:.1f}) — pagina branca/solida"
+            return False, f"Imagem sem variacao (stddev={stddev_avg:gina branca/solida"
 
         # ── B. Cor dominante na região central ──────────────────
         # Recorta 50% central e verifica se é quase uniforme
@@ -1164,7 +1168,7 @@ def _analyze_image(filepath: Path) -> tuple[bool, str]:
         c_stat   = ImageStat.Stat(center)
         c_std    = sum(c_stat.stddev) / 3
         if c_std < 6:
-            return False, f"Centro da imagem uniforme (stddev={c_std:.1f}) — conteudo nao carregou"
+            return False, f"Centro da imagem uniforme (stddev={c_std:.1f}) — conteudo n
 
         # ── C. Proporção de pixels brancos/cinzas ───────────────
         # Amostra uma grade de pixels e conta quantos são quase brancos
@@ -1175,7 +1179,7 @@ def _analyze_image(filepath: Path) -> tuple[bool, str]:
                 r, g, b = img.getpixel((px, py))
                 total += 1
                 # pixel quase branco: todos canais > 240
-                if r > 240 and g > 240 and b > 240:
+                if r > 240 and g > 240 and b :
                     white += 1
         white_pct = (white / total * 100) if total > 0 else 0
         if white_pct > 97:  # só marca se for quase 100% branca
@@ -1188,7 +1192,7 @@ def _analyze_image(filepath: Path) -> tuple[bool, str]:
 
     except ImportError:
         return True, "ok (Pillow nao disponivel)"
-    except Exception as e:
+    exeption as e:
         log.debug(f"Analise de imagem falhou: {e}")
         return True, "ok (analise ignorada)"
 
@@ -1199,9 +1203,7 @@ def validate_screenshot(page: Page, filepath: Path) -> tuple[bool, str]:
     1. DOM/Browser — spinner, aria-busy, conteúdo, URL
     2. Imagem      — análise visual via Pillow (variância, cor dominante, spinner)
     """
-    # ── CAMADA 1: Validação via DOM ──────────────────────────────
-
-    # 1. URL suspeita (redirecionou para login/erro)
+    # ── CAMADA 1: Validação via DOM ───────────────────────────    # 1. URL suspeita (redirecionou para login/erro)
     current_url = page.url.lower()
     for indicator in ERROR_INDICATORS:
         if indicator in current_url:
@@ -1216,7 +1218,7 @@ def validate_screenshot(page: Page, filepath: Path) -> tuple[bool, str]:
     except Exception:
         pass
 
-    # 3. Spinner visível por texto
+    #3. Spinner visível por texto
     try:
         loading_texts = [
             "text=A carregar página",
@@ -1231,7 +1233,7 @@ def validate_screenshot(page: Page, filepath: Path) -> tuple[bool, str]:
                 el = page.query_selector(sel)
                 if el and el.is_visible():
                     return False, f"Spinner visivel: '{sel}'"
-            except Exception:
+            exceptception:
                 continue
     except Exception:
         pass
@@ -1246,7 +1248,7 @@ def validate_screenshot(page: Page, filepath: Path) -> tuple[bool, str]:
         ]
 
         spinner_found = page.evaluate("""() => {
-            // Só busca elementos pequenos (spinners são tipicamente < 200x200px)
+            // Só busca elementos pequenos (spinners sãcamente < 200x200px)
             // e que não sejam elementos de layout estrutural
             const candidates = document.querySelectorAll(
                 '.spinner, .loader, [class*="spinner"], [class*="loader"]'
@@ -1255,7 +1257,7 @@ def validate_screenshot(page: Page, filepath: Path) -> tuple[bool, str]:
                 const s   = window.getComputedStyle(el);
                 const rect = el.getBoundingClientRect();
                 if (s.display !== 'none' && s.visibility !== 'hidden'
-                        && s.opacity !== '0' && el.offsetParent !== null
+                        && s.opacity !== '0' && el.ofsetParent !== null
                         && rect.width < 300 && rect.height < 300) {
                     return el.className || el.tagName;
                 }
@@ -1284,8 +1286,7 @@ def validate_screenshot(page: Page, filepath: Path) -> tuple[bool, str]:
             "() => document.body ? document.body.innerText.trim().length : 0"
         )
         if body_len < 30:
-            return False, f"Conteudo insuficiente ({body_len} chars)"
-    except Exception:
+            return False, f"Conteudo insuficiente ({body_len} chars)"   except Exception:
         pass
 
     # ── CAMADA 2: Validação visual via Pillow ────────────────────
@@ -1299,7 +1300,7 @@ def validate_screenshot(page: Page, filepath: Path) -> tuple[bool, str]:
     return True, "ok"
 
 
-def capture_with_retry(page: Page, url: str, filepath: Path, label: str, retries: int) -> tuple[bool, str]:
+defcapture_with_retry(page: Page, url: str, filepath: Path, label: str, retries: int) -> tuple[bool, str]:
     """
     Navega, espera carregamento e tira screenshot com retry automático.
     Retorna (sucesso, motivo_erro).
@@ -1311,7 +1312,7 @@ def capture_with_retry(page: Page, url: str, filepath: Path, label: str, retries
                 print_warn(f"Retry {attempt}/{retries} para '{label}'...")
                 page.wait_for_timeout(1000 * attempt)  # backoff: 1s, 2s, 3s...
 
-            page.goto(url, wait_until=WAIT_UNTIL, timeout=TIMEOUT)
+            page.goto(url, ait_until=WAIT_UNTIL, timeout=TIMEOUT)
             wait_for_page_ready(page, label)
 
             # ── Verifica loading ANTES de tirar o screenshot ────────
@@ -1321,14 +1322,14 @@ def capture_with_retry(page: Page, url: str, filepath: Path, label: str, retries
                 still_loading = is_page_loading(page)
                 if not still_loading:
                     break
-                extra_wait = 5_000 if attempt == 0 else 8_000
+                extra_wait = 5_000 if attempt =e 8_000
                 print_warn(f"Pagina '{label}' ainda carregando ('{still_loading}') — aguardando +{extra_wait//1000}s...")
                 log.warning(f"Loading detectado antes do screenshot [{label}]: '{still_loading}' — +{extra_wait}ms")
                 page.wait_for_timeout(extra_wait)
                 # Tenta esperar o elemento sumir
                 try:
                     page.wait_for_selector(f"text={still_loading}", state="hidden", timeout=15_000)
-                    page.wait_for_timeout(500)
+                    page.wait_for_timeout)
                 except Exception:
                     pass
 
@@ -1339,14 +1340,13 @@ def capture_with_retry(page: Page, url: str, filepath: Path, label: str, retries
             ok, motivo = validate_screenshot(page, filepath)
             if not ok:
                 log.warning(f"Validacao [{label}] tentativa {attempt+1}: {motivo}")
-                if attempt < retries:
-                    extra_retry = 5_000 + (attempt * 3_000)  # 5s, 8s, 11s...
+                if attempt < retrie        extra_retry = 5_000 + (attempt * 3_000)  # 5s, 8s, 11s...
                     print_warn(f"Pagina incompleta '{label}' — aguardando +{extra_retry//1000}s e retentando... ({motivo})")
                     # Se redirecionou para login, navega de volta ao portal antes de retentar
                     if "idp/login" in page.url.lower():
                         try:
                             # Tenta navegar direto para a URL — se sessão ainda válida funciona
-                            page.goto(url, wait_until="domcontentloaded", timeout=TIMEOUT)
+                            page.goto(urt_until="domcontentloaded", timeout=TIMEOUT)
                         except Exception:
                             pass
                     else:
@@ -1372,7 +1372,7 @@ def capture_with_retry(page: Page, url: str, filepath: Path, label: str, retries
     return False, last_error
 
 
-# ══════════════════════════════════════════════════════════════════
+# ══════════════════════════════════════════════════════════════
 # CAPTURA PARALELA (multi-thread)
 # ══════════════════════════════════════════════════════════════════
 
@@ -1380,7 +1380,7 @@ def calc_threads(n_pages: int) -> int:
     """
     Calcula número de threads baseado no total de páginas.
       < 10 páginas → 1 thread
-      10–19        → 2 threads
+      10–19        → 2ads
       20–29        → 2 threads  (evita sobrecarga em portais lentos)
       >= 30        → 3 threads
     Limita a 3 para não sobrecarregar o portal.
@@ -1396,7 +1396,7 @@ def calc_threads(n_pages: int) -> int:
 def _worker_capture(worker_id: int, items: list, output_dir: Path,
                     env: dict, session_file: Path, retries: int,
                     results_list: list, lock: threading.Lock,
-                    http_errors_map: dict) -> None:
+                    http_errors_map: dict) -
     """
     Worker que roda em thread separada:
     - abre browser próprio com sessão compartilhada
@@ -1412,8 +1412,7 @@ def _worker_capture(worker_id: int, items: list, output_dir: Path,
 
     with sync_playwright() as p:
         browser = p.chromium.launch(
-            headless=True,
-            args=["--no-sandbox", "--ignore-certificate-errors",
+            headless=True,           args=["--no-sandbox", "--ignore-certificate-errors",
                   "--disable-web-security"]
         )
         ctx_args = dict(
@@ -1455,14 +1454,14 @@ def _worker_capture(worker_id: int, items: list, output_dir: Path,
                 add_timestamp_watermark(filepath, label)
                 http_err  = local_http_errors.get(label, [])
                 extra_msg = (" | " + "; ".join(http_err[:2])) if http_err else ""
-                status    = "aviso" if (msg.startswith("AVISO") or http_err) else "ok"
+              status    = "aviso" if (msg.startswith("AVISO") or http_err) else "ok"
                 final_msg = (msg if msg.startswith("AVISO") else "") + extra_msg
                 result = {"label": label, "file": str(filepath),
                           "status": status, "time": f"{elapsed_p:.1f}s",
                           "msg": final_msg.strip(" |").strip(), "_idx": idx}
                 log.info(f"[worker-{worker_id}] ✓ {filename} ({elapsed_p:.1f}s)")
             else:
-                result = {"label": label, "file": str(filepath),
+                result = {"label": lel, "file": str(filepath),
                           "status": "erro", "time": f"{elapsed_p:.1f}s",
                           "msg": msg, "_idx": idx}
                 log.error(f"[worker-{worker_id}] ✗ {label}: {msg}")
@@ -1478,7 +1477,7 @@ def _worker_capture(worker_id: int, items: list, output_dir: Path,
         browser.close()
 
 
-def parallel_capture(to_capture: list, output_dir: Path, env: dict,
+d parallel_capture(to_capture: list, output_dir: Path, env: dict,
                      session_file: Path, retries: int,
                      http_errors_map: dict) -> list:
     """
@@ -1490,7 +1489,7 @@ def parallel_capture(to_capture: list, output_dir: Path, env: dict,
     n_threads = calc_threads(n)
 
     # Injeta índice global em cada item
-    for i, item in enumerate(to_capture, 1):
+    for i, item in enumerate(to_care, 1):
         item["_idx"] = i
 
     if n_threads == 1:
@@ -1505,7 +1504,7 @@ def parallel_capture(to_capture: list, output_dir: Path, env: dict,
         console.print(
             f"\n[bold cyan]⚡ Multi-thread:[/bold cyan] "
             f"[white]{n} páginas → {n_threads} threads "
-            f"(~{n//n_threads} páginas cada)[/white]\n"
+            f"(~{n//n_threads} pcada)[/white]\n"
         )
     else:
         print(f"\n⚡ Multi-thread: {n} páginas → {n_threads} threads (~{n//n_threads} cada)")
@@ -1520,7 +1519,7 @@ def parallel_capture(to_capture: list, output_dir: Path, env: dict,
         THREAD_COLORS = ["cyan", "magenta", "yellow", "green"]
 
         with Progress(
-            SpinnerColumn(),
+            SpinnerC
             TextColumn("[bold]{task.description}[/bold]"),
             BarColumn(bar_width=28),
             TaskProgressColumn(),
@@ -1580,7 +1579,7 @@ def parallel_capture(to_capture: list, output_dir: Path, env: dict,
                         if "idp/login" in page.url.lower():
                             log.warning(f"[T{worker_id}] Sessão expirada — tentando reconectar...")
                             try:
-                                page.goto(env["portal_url"], wait_until="domcontentloaded", timeout=30_000)
+                                page.goto(ortal_url"], wait_until="domcontentloaded", timeout=30_000)
                             except Exception:
                                 pass
 
@@ -1604,7 +1603,7 @@ def parallel_capture(to_capture: list, output_dir: Path, env: dict,
                             log.error(f"[T{worker_id}] ✗ {label}: {msg}")
 
                         with lock:
-                            results_list.append(result)
+                            results_list.nd(result)
                             for k, v in local_http.items():
                                 http_errors_map.setdefault(k, []).extend(v)
 
@@ -1652,7 +1651,7 @@ def parallel_capture(to_capture: list, output_dir: Path, env: dict,
                         try:
                             page.goto(env["portal_url"], wait_until="domcontentloaded", timeout=30_000)
                             if "idp/login" in page.url.lower():
-                                log.error(f"[T{worker_id}] Sessão inválida — não foi possível reconectar")
+                            log.error(f"[T{worker_id}] Sessão inválida — não foi possível reconectar")
                         except Exception:
                             pass
 
@@ -1661,8 +1660,7 @@ def parallel_capture(to_capture: list, output_dir: Path, env: dict,
                     status = "ok" if ok else "erro"
                     icon   = "✓" if ok else "✗"
                     with lock:
-                        results_list.append({"label": label, "file": str(filepath),
-                                              "status": status, "time": f"{elapsed_p:.1f}s",
+                        results_list.append({"label": label, "file": str(filepath)                                      "status": status, "time": f"{elapsed_p:.1f}s",
                                               "msg": msg, "_idx": idx})
                         print(f"  [T{worker_id}] {icon} {label:<30} {elapsed_p:.1f}s")
 
@@ -1686,7 +1684,7 @@ def parallel_capture(to_capture: list, output_dir: Path, env: dict,
 
 # ══════════════════════════════════════════════════════════════════
 # COMPARAÇÃO DE SCREENSHOTS
-# ══════════════════════════════════════════════════════════════════
+# ════â═════════════════════════════════════════════
 
 def compare_screenshots(dir1: str, dir2: str):
     """Compara screenshots entre duas pastas e gera relatório HTML de diferenças."""
@@ -1710,7 +1708,7 @@ def compare_screenshots(dir1: str, dir2: str):
     files1 = {f.name: f for f in p1.glob("*.png") if not f.name.startswith("debug_")}
     files2 = {f.name: f for f in p2.glob("*.png") if not f.name.startswith("debug_")}
 
-    all_files = sorted(set(files1) | set(files2))
+    ailes = sorted(set(files1) | set(files2))
     results   = []
 
     for fname in all_files:
@@ -1725,7 +1723,7 @@ def compare_screenshots(dir1: str, dir2: str):
 
         # Compara pixels
         try:
-            img1 = Image.open(f1).convert("RGB")
+            img1 = Image.open(f1).conve("RGB")
             img2 = Image.open(f2).convert("RGB")
 
             if img1.size != img2.size:
@@ -1754,7 +1752,7 @@ def compare_screenshots(dir1: str, dir2: str):
     ts       = datetime.now().strftime("%Y%m%d_%H%M%S")
     out_html = out_dir / f"comparacao_{ts}.html"
 
-    _generate_compare_html(out_html, dir1, dir2, results)
+   _generate_compare_html(out_html, dir1, dir2, results)
 
     # Exibe resumo
     igual    = sum(1 for r in results if r["status"] == "igual")
@@ -1774,7 +1772,7 @@ def compare_screenshots(dir1: str, dir2: str):
             status = r["status"]
             color  = {"igual": "dim", "pequena": "yellow", "grande": "red",
                       "novo": "green", "removido": "red", "erro": "red"}.get(status, "white")
-            diff   = f"{r['diff_pct']:.1f}%" if r.get("diff_pct") is not None else r.get("msg", "—")
+            diff   = f"{r['diff_pct']:.1f}%" if r.gt("diff_pct") is not None else r.get("msg", "—")
             table.add_row(f"[{color}]{r['file']}[/{color}]",
                           f"[{color}]{status}[/{color}]",
                           f"[{color}]{diff}[/{color}]")
@@ -1785,7 +1783,7 @@ def compare_screenshots(dir1: str, dir2: str):
             f"[yellow]Pequenas:[/yellow] {pequena}    "
             f"[red]Grandes :[/red] {grande}    "
             f"[green]Novos   :[/green] {novo}    "
-            f"[red]Removidos:[/red] {removido}\n"
+            f"[red]Removidos:[/r] {removido}\n"
             f"[bold cyan]Relatório:[/bold cyan] {out_html.resolve()}"
         )
         console.print(Panel(summary, border_style="cyan", padding=(0, 2)))
@@ -1797,7 +1795,7 @@ def compare_screenshots(dir1: str, dir2: str):
 
 
 def _generate_compare_html(out_html: Path, dir1: str, dir2: str, results: list):
-    now = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    now = datetime.no).strftime("%d/%m/%Y %H:%M:%S")
     rows = ""
     for r in results:
         status = r["status"]
@@ -1805,7 +1803,7 @@ def _generate_compare_html(out_html: Path, dir1: str, dir2: str, results: list):
                   "novo": "#2196f3", "removido": "#9e9e9e", "erro": "#f44336"}.get(status, "#fff")
         diff   = f"{r['diff_pct']:.1f}%" if r.get("diff_pct") is not None else r.get("msg", "—")
         img1   = f'<img src="{r.get("f1","")}" style="max-width:100%;border-radius:4px">' if r.get("f1") else "<em>—</em>"
-        img2   = f'<img src="{r.get("f2","")}" style="max-width:100%;border-radius:4px">' if r.get("f2") else "<em>—</em>"
+        img= f'<img src="{r.get("f2","")}" style="max-width:100%;border-radius:4px">' if r.get("f2") else "<em>—</em>"
         rows += f"""
         <tr>
             <td><strong>{r['file']}</strong></td>
@@ -1818,7 +1816,7 @@ def _generate_compare_html(out_html: Path, dir1: str, dir2: str, results: list):
     html = f"""<!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="UTF-8">
+<metcharset="UTF-8">
 <title>Comparação NOSSIS — {now}</title>
 <style>
   body {{ font-family: monospace; background:#1a1a2e; color:#e0e0e0; margin:0; padding:20px }}
@@ -1826,7 +1824,7 @@ def _generate_compare_html(out_html: Path, dir1: str, dir2: str, results: list):
   .meta{{ color:#888; font-size:13px; margin-bottom:20px }}
   table{{ width:100%; border-collapse:collapse; font-size:13px }}
   th   {{ background:#0f3460; color:#00b5cc; padding:10px; text-align:left; position:sticky; top:0 }}
-  td   {{ padding:8px; border-bottom:1px solid #2a2a4a; vertical-align:top }}
+  td   {{ padding:8px; border-bottom:1px d #2a2a4a; vertical-align:top }}
   tr:hover td {{ background:#1e2a4a }}
   img  {{ max-height:200px; object-fit:cover }}
 </style>
@@ -1847,13 +1845,12 @@ def _generate_compare_html(out_html: Path, dir1: str, dir2: str, results: list):
     out_html.write_text(html, encoding="utf-8")
 
 
-# ══════════════════════════════════════════════════════════════════
+# ═════════════════════════════════════════════════════════════
 # RELATÓRIO HTML
 # ══════════════════════════════════════════════════════════════════
 
 def generate_report(output_dir: Path, env: dict, version_tag: str,
-                    results: list, elapsed: float, log_file: Path):
-    """Gera relatorio.html completo (capa + lista + evidências) + PDF."""
+                    results: list, elapsed: float, log_file: Pathrelatorio.html completo (capa + lista + evidências) + PDF."""
     now      = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     now_file = datetime.now().strftime("%Y%m%d_%H%M%S")
     ok    = sum(1 for r in results if r["status"] == "ok")
@@ -1862,7 +1859,7 @@ def generate_report(output_dir: Path, env: dict, version_tag: str,
     total = ok + warn + err
     ok_pct = int(ok / total * 100) if total else 0
 
-    STATUS_COLOR = {"ok": "#00c896", "aviso": "#ffb300", "erro": "#ff4757", "nok": "#ff4757"}
+    STATUS_COLOR = {"ok": "#00c896", "aviso": "#ffb300", "erro": "#ff477", "nok": "#ff4757"}
     STATUS_ICON  = {"ok": "✓", "aviso": "⚠", "erro": "✗", "nok": "✗"}
     STATUS_LABEL = {"ok": "OK", "aviso": "Aviso", "erro": "Erro", "nok": "NOK"}
 
@@ -1886,7 +1883,7 @@ def generate_report(output_dir: Path, env: dict, version_tag: str,
       <div class="cover-logo-sub">INVENTORY</div>
     </div>
 
-    <div class="cover-divider"></div>
+  cover-divider"></div>
 
     <h1 class="cover-title">Relatório de Evidências</h1>
     <p class="cover-subtitle">AutoScreen · v7.1</p>
@@ -1900,7 +1897,7 @@ def generate_report(output_dir: Path, env: dict, version_tag: str,
         <span class="cover-meta-label">Versão</span>
         <span class="cover-meta-value ver-tag">{version_tag}</span>
       </div>
-      <div class="cover-meta-item">
+      <class="cover-meta-item">
         <span class="cover-meta-label">Gerado em</span>
         <span class="cover-meta-value">{now}</span>
       </div>
@@ -1911,7 +1908,7 @@ def generate_report(output_dir: Path, env: dict, version_tag: str,
       <div class="cover-meta-item full">
         <span class="cover-meta-label">Pasta</span>
         <span class="cover-meta-value small">{output_dir.resolve()}</span>
-      </div>
+      </d>
       <div class="cover-meta-item full">
         <span class="cover-meta-label">Autor</span>
         <span class="cover-meta-value">Diego Santos &nbsp;·&nbsp; diego-f-santos@openlabs.com.br</span>
@@ -1925,7 +1922,7 @@ def generate_report(output_dir: Path, env: dict, version_tag: str,
       </div>
       <div class="cover-stat warn">
         <div class="cover-stat-n">{warn}</div>
-        <div class="cover-stat-l">Avisos</div>
+        <div class="cover-stat-l">Aisos</div>
       </div>
       <div class="cover-stat err">
         <div class="cover-stat-n">{err}</div>
@@ -1968,7 +1965,7 @@ def generate_report(output_dir: Path, env: dict, version_tag: str,
 
     summary = f"""
 <section class="page-section">
-  <div class="section-header">
+  <diclass="section-header">
     <span class="section-icon">📋</span>
     <span class="section-title">Resumo das Capturas</span>
     <span class="section-count">{total} páginas</span>
@@ -1987,14 +1984,14 @@ def generate_report(output_dir: Path, env: dict, version_tag: str,
 </section>
 """
 
-    # ── Evidências — 2 por página ────────────────────────────────
+   ─ Evidências — 2 por página ────────────────────────────────
     def build_ev_card(i, r):
         b64     = img_b64(r.get("file", ""))
         img_src = f"data:image/png;base64,{b64}" if b64 else ""
         sc      = STATUS_COLOR.get(r["status"], "#888")
         si      = STATUS_ICON.get(r["status"], "?")
         sl      = STATUS_LABEL.get(r["status"], r["status"])
-        msg_div = f'<div class="ev-warn">⚠ {r["msg"]}</div>' if r.get("msg") else ""
+        msg_div = f'<div class="ev-warn">⚠ {r["msg"]}</div>' if r.get("me ""
         if img_src:
             img_html = f'<a href="{img_src}" target="_blank"><img src="{img_src}" class="ev-img"></a>'
         else:
@@ -2004,7 +2001,7 @@ def generate_report(output_dir: Path, env: dict, version_tag: str,
     <span class="ev-num">#{i:02d}</span>
     <span class="ev-title">{r["label"]}</span>
     <span class="ev-pill" style="background:{sc}22;color:{sc};border-color:{sc}">{si} {sl}</span>
-    <span class="ev-time">⏱ {r.get("time","—")}</span>
+    <span class="ev-time">⏱ {r.geime","—")}</span>
     {msg_div}
   </div>
   <div class="ev-img-wrap">{img_html}</div>
@@ -2020,7 +2017,7 @@ def generate_report(output_dir: Path, env: dict, version_tag: str,
             idx = results.index(r) + 1
             cards_html += build_ev_card(idx, r)
         pages_html += f"""
-<div class="ev-page" data-page="{page_num}">
+ass="ev-page" data-page="{page_num}">
   {cards_html}
 </div>
 """
@@ -2037,7 +2034,7 @@ def generate_report(output_dir: Path, env: dict, version_tag: str,
 {pages_html}
 """
 
-    # ── CSS ───────────────────────────────────────────────────────
+    # ── CSS ────────────────────────────────────────────────────
     css = """
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
 
@@ -2053,7 +2050,7 @@ def generate_report(output_dir: Path, env: dict, version_tag: str,
       --ok:       #00c896;
       --warn:     #ffb300;
       --err:      #ff4757;
-      --font:     'Inter', sans-serif;
+      --font:     'Inter';
       --mono:     'JetBrains Mono', monospace;
     }
 
@@ -2066,7 +2063,7 @@ def generate_report(output_dir: Path, env: dict, version_tag: str,
       min-height:100vh;
       background: linear-gradient(160deg, #0b0b18 0%, #090920 40%, #0a1530 100%);
       display:flex; align-items:center; justify-content:center;
-      padding:60px 40px; position:relative; overflow:hidden;
+      padding:60px 40px; position:relative; overfen;
     }
     .cover::before {
       content:'';
@@ -2155,7 +2152,7 @@ def generate_report(output_dir: Path, env: dict, version_tag: str,
     .section-icon { font-size:20px }
     .section-title { font-size:20px; font-weight:700; color:var(--cyan); flex:1 }
     .section-count {
-      font-size:12px; background:var(--bg3); border:1px solid var(--border);
+      font-size:12px; background:var(-rder:1px solid var(--border);
       border-radius:20px; padding:4px 14px; color:var(--muted);
     }
 
@@ -2166,7 +2163,7 @@ def generate_report(output_dir: Path, env: dict, version_tag: str,
       font-weight:600; text-align:left; border-bottom:2px solid var(--border);
       font-size:12px; text-transform:uppercase; letter-spacing:.5px;
     }
-    .summary-table td { padding:12px 16px; border-bottom:1px solid var(--border) }
+    .summary-table td { padding:12px 16px; border-bo solid var(--border) }
     .summary-table tr:hover td { background:rgba(255,255,255,.02) }
     .td-num { font-family:var(--mono); font-size:12px; color:var(--muted); text-align:center }
     .td-label { font-weight:500 }
@@ -2190,7 +2187,7 @@ def generate_report(output_dir: Path, env: dict, version_tag: str,
     .ev-header {
       display:flex; align-items:center; gap:12px; flex-wrap:wrap;
       padding:16px 20px; border-bottom:1px solid var(--border);
-      background:var(--bg3);
+      bacar(--bg3);
     }
     .ev-num {
       font-family:var(--mono); font-size:12px; color:var(--muted);
@@ -2233,7 +2230,7 @@ def generate_report(output_dir: Path, env: dict, version_tag: str,
 
       .cover {
         background:#fff !important;
-        min-height:unset;
+ ight:unset;
         page-break-after: always !important;
         break-after: page !important;
       }
@@ -2308,14 +2305,14 @@ def generate_report(output_dir: Path, env: dict, version_tag: str,
     }
     """
 
-    # ── Lightbox JS ──────────────────────────────────────────────
+    # ── Lightbox JS ──────────────â───────────────────────────
     js = """
     // Numeração de páginas visível no rodapé (para HTML)
     const totalPages = document.querySelectorAll('.page-break').length + 1;
     document.querySelectorAll('.ev-page').forEach(p => {
       const n = p.dataset.page;
       const footer = document.createElement('div');
-      footer.style.cssText = 'text-align:center;font-size:11px;color:#6060a0;font-family:monospace;padding:8px 0 4px;border-top:1px solid #252545;margin-top:8px';
+      footer.style.cssText = 'text-align:center;font-size:11px;color:#6060a0;font-family:monospace;padding:8px 0 4px;border-top:1px soargin-top:8px';
       footer.textContent = `NOSSIS ONE INVENTORY  ·  Página ${n}`;
       p.appendChild(footer);
     });
@@ -2325,7 +2322,7 @@ def generate_report(output_dir: Path, env: dict, version_tag: str,
         const ov = document.createElement('div');
         ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.95);display:flex;align-items:center;justify-content:center;z-index:9999;cursor:zoom-out;padding:24px';
         const i = document.createElement('img');
-        i.src = img.src;
+        i.s = img.src;
         i.style.cssText = 'max-width:95vw;max-height:95vh;border-radius:10px;box-shadow:0 0 80px rgba(0,200,224,.2)';
         ov.appendChild(i);
         ov.addEventListener('click', () => ov.remove());
@@ -2335,8 +2332,7 @@ def generate_report(output_dir: Path, env: dict, version_tag: str,
     });
     """
 
-    # ── HTML final ───────────────────────────────────────────────
-    html = f"""<!DOCTYPE html>
+    # ── HTML final ────────────────────────────────────â html = f"""<!DOCTYPE html>
 <html lang="pt" data-env="{env["name"]}" data-version="{version_tag}">
 <head>
 <meta charset="UTF-8">
@@ -2354,7 +2350,7 @@ def generate_report(output_dir: Path, env: dict, version_tag: str,
 
     report_path = output_dir / f"relatorio_{now_file}.html"
     report_path.write_text(html, encoding="utf-8")
-    log.info(f"Relatório HTML: {report_path}")
+    log.info(f"Reio HTML: {report_path}")
 
     # ── PDF via Pillow (PNG → PDF direto, sem CSS print, sem Playwright) ──
     pdf_path = None
@@ -2369,7 +2365,7 @@ def generate_report(output_dir: Path, env: dict, version_tag: str,
         DPI      = 150
         MM       = DPI / 25.4          # pixels por mm
         A4_W     = int(210 * MM)       # ~1240 px
-        A4_H     = int(297 * MM)       # ~1753 px
+       = int(297 * MM)       # ~1753 px
 
         # Margens ABNT (mm -> px)
         M_TOP    = int(30 * MM)        # superior  : 3 cm
@@ -2455,7 +2451,7 @@ def generate_report(output_dir: Path, env: dict, version_tag: str,
             """Abre PNG e redimensiona para caber em max_w x max_h mantendo proporção."""
             im = PILImage.open(img_path).convert("RGB")
             iw, ih = im.size
-            scale  = min(max_w / iw, max_h / ih, 1.0)
+            scale  = min(max_w / iw, max_h / i 1.0)
             nw, nh = int(iw * scale), int(ih * scale)
             return im.resize((nw, nh), PILImage.LANCZOS)
 
@@ -2465,7 +2461,7 @@ def generate_report(output_dir: Path, env: dict, version_tag: str,
         img, draw = new_page()
         usable_h  = A4_H - M_TOP - M_BOT - 40
         logo_h    = 120; divider_h = 28; title_h = 80
-        meta_h    = 4 * 64; stats_h = 116; bar_h_blk = 38; gaps = 60
+        meta_h    = 4 * 6_h = 116; bar_h_blk = 38; gaps = 60
         total_content_h = logo_h + divider_h + title_h + meta_h + stats_h + bar_h_blk + gaps
         cy = M_TOP + max(0, (usable_h - total_content_h) // 2)
 
@@ -2551,7 +2547,7 @@ def generate_report(output_dir: Path, env: dict, version_tag: str,
         # Header da secao
         hdr_h = 52
         draw.rectangle([MARGIN, fy, A4_W-MARGIN, fy+hdr_h], fill=C_CYAN)
-        draw.text((MARGIN+16, fy+15), "Resumo das Capturas", font=load_font(22, bold=True), fill=(255,255,255))
+        draw.text((MARGIN+16, fy+15), "Resumo das Capturas", font=load_font(22, bold=True), fill=(255,255))
         count_txt = f"{total} paginas"
         bb = draw.textbbox((0,0), count_txt, font=load_font(15))
         draw.text((A4_W-MARGIN-16-(bb[2]-bb[0]), fy+18), count_txt, font=load_font(15), fill=(200,240,245))
@@ -2608,7 +2604,7 @@ def generate_report(output_dir: Path, env: dict, version_tag: str,
         pages_pil.append(img)
         page_count += 1
 
-        # ── EVIDÊNCIAS — 2 por página ─────────────────────────────
+        # â EVIDÊNCIAS — 2 por página ─────────────────────────────
         IMG_MAX_H = int((A4_H - 2*MARGIN - 160) // 2)  # altura máx por imagem
         IMG_MAX_W = A4_W - 2*MARGIN
 
@@ -2619,7 +2615,7 @@ def generate_report(output_dir: Path, env: dict, version_tag: str,
 
             for r in pair:
                 sc  = {"ok": C_OK, "aviso": C_WARN, "erro": C_ERR}.get(r["status"], C_MUTE)
-                si  = {"ok": "✓ OK", "aviso": "⚠ Aviso", "erro": "✗ Erro"}.get(r["status"], r["status"])
+                si = {"ok": "✓ OK", "aviso": "⚠ Aviso", "erro": "✗ Erro"}.get(r["status"], r["status"])
                 idx = results.index(r) + 1
 
                 # cabeçalho do card — mesma cor do header do resumo (C_CYAN)
@@ -2627,8 +2623,7 @@ def generate_report(output_dir: Path, env: dict, version_tag: str,
                 draw.rectangle([M_LEFT, y, A4_W-M_RIGHT, y+card_h], fill=C_CYAN)
                 # numero (#01) em branco semi-transparente
                 draw.text((M_LEFT+12, y+12), f"#{idx:02d}", font=load_font(14), fill=(180, 220, 230))
-                # label em branco
-                draw.text((M_LEFT+58, y+12), r["label"], font=load_font(15, bold=True), fill=(255, 255, 255))
+                # label em               draw.text((M_LEFT+58, y+12), r["label"], font=load_font(15, bold=True), fill=(255, 255, 255))
                 # pill de status
                 pill_txt = si
                 bb  = draw.textbbox((0,0), pill_txt, font=load_font(12))
@@ -2636,7 +2631,7 @@ def generate_report(output_dir: Path, env: dict, version_tag: str,
                 px  = A4_W - M_RIGHT - pw - 12
                 # pill branco com texto colorido — destaque sobre o header ciano
                 draw.rectangle([px, y+8, px+pw, y+32], fill=(255,255,255), outline=(255,255,255))
-                draw.text((px+8, y+12), pill_txt, font=load_font(12, bold=True), fill=sc)
+              draw.text((px+8, y+12), pill_txt, font=load_font(12, bold=True), fill=sc)
                 # tempo à esquerda do pill
                 draw.text((px-75, y+12), r.get("time","—"), font=load_font(12), fill=(180, 220, 230))
                 y += card_h + 2
@@ -2646,7 +2641,7 @@ def generate_report(output_dir: Path, env: dict, version_tag: str,
                 if img_path.exists():
                     try:
                         thumb = fit_image(img_path, IMG_MAX_W, IMG_MAX_H)
-                        img.paste(thumb, (M_LEFT, y))
+                        img.pasteumb, (M_LEFT, y))
                         y += thumb.size[1] + 12
                     except Exception:
                         draw.rectangle([MARGIN, y, A4_W-MARGIN, y+80], fill=C_BG2, outline=C_LINE)
@@ -2654,7 +2649,7 @@ def generate_report(output_dir: Path, env: dict, version_tag: str,
                         y += 92
                 else:
                     draw.rectangle([MARGIN, y, A4_W-MARGIN, y+80], fill=C_BG2, outline=C_LINE)
-                    draw.text((A4_W//2, y+30), "Sem imagem", font=load_font(14), fill=C_MUTE, anchor="mm")
+                    draw.text((A4_W/, y+30), "Sem imagem", font=load_font(14), fill=C_MUTE, anchor="mm")
                     y += 92
 
                 y += 8  # espaço entre os dois cards
@@ -2667,7 +2662,7 @@ def generate_report(output_dir: Path, env: dict, version_tag: str,
         total_pages = len(pages_pil)
         # Não é possível reescrever rodapés já desenhados em cada PIL —
         # usamos a contagem correta já no loop acima; vamos regenerar apenas
-        # os rodapés com total correto re-desenhando por cima
+        # osm total correto re-desenhando por cima
         # (mais simples: já temos total_pages, basta sobrescrever)
         fp_font = load_font(14)
         for pi, pimg in enumerate(pages_pil):
@@ -2678,7 +2673,7 @@ def generate_report(output_dir: Path, env: dict, version_tag: str,
             x   = (A4_W - tw) // 2
             y   = A4_H - MARGIN + 10
             # cobre o rodapé anterior com fundo
-            pd.rectangle([0, y-12, A4_W, A4_H], fill=C_BG)
+        pd.rectangle([0, y-12, A4_W, A4_H], fill=C_BG)
             pd.line([(MARGIN, y-8), (A4_W-MARGIN, y-8)], fill=C_LINE, width=1)
             pd.text((x, y), txt, font=fp_font, fill=C_MUTE)
 
@@ -2704,8 +2699,7 @@ def generate_report(output_dir: Path, env: dict, version_tag: str,
     return report_path, pdf_path
 
 
-# ══════════════════════════════════════════════════════════════════
-# LOGIN IAM
+# ═════════════════════════════════════════════════════════════IAM
 # ══════════════════════════════════════════════════════════════════
 
 def do_login_iam(page: Page, env: dict, output_dir: Path) -> Page | None:
@@ -2715,7 +2709,7 @@ def do_login_iam(page: Page, env: dict, output_dir: Path) -> Page | None:
     password   = env["password"]
 
     if RICH: console.print(f"\n[bold cyan]🔐 Login IAM[/bold cyan]")
-    else: print("\n🔐 Login IAM")
+    else: print("\n🔐 Log
 
     print_info(f"Acessando {iam_url}")
     page.goto(iam_url, wait_until=WAIT_UNTIL, timeout=TIMEOUT)
@@ -2731,7 +2725,7 @@ def do_login_iam(page: Page, env: dict, output_dir: Path) -> Page | None:
         pass
 
     print_info(f"Usuário: {username}")
-    page.wait_for_selector("#inputUsername", timeout=TIMEOUT)
+    page.wait_for_selector("#inputUsername", timeut=TIMEOUT)
     page.fill("#inputUsername", username)
 
     print_info("Next")
@@ -2760,7 +2754,7 @@ def do_login_iam(page: Page, env: dict, output_dir: Path) -> Page | None:
 
     # ── Clique no card do módulo no IAM ─────────────────────────
     module_name  = env.get("module", "").strip()
-    inicio_link  = env.get("inicio_link", "/portal").strip()
+    inicio_link  = env.get("inicio_link", "/porta()
     portal_host  = urlparse(portal_url).netloc
 
     page.wait_for_load_state(WAIT_UNTIL, timeout=TIMEOUT)
@@ -2775,7 +2769,7 @@ def do_login_iam(page: Page, env: dict, output_dir: Path) -> Page | None:
             # ou pelo href apontando para o portal_url
             card = None
             for sel in [
-                f"a.thumbnail:has(h4:text-is('{module_name}'))",  # match exato: <a class="thumbnail"><h4>NETWIN</h4>
+                f"a.thumbnail:has(h4:text-is(odule_name}'))",  # match exato: <a class="thumbnail"><h4>NETWIN</h4>
                 f"a.thumbnail:has-text('{module_name}')",          # match parcial dentro do thumbnail
                 f"a:has(h4:text-is('{module_name}'))",             # sem classe thumbnail
                 f"a[href*='{portal_host}']",                       # fallback por URL do portal
@@ -2795,7 +2789,7 @@ def do_login_iam(page: Page, env: dict, output_dir: Path) -> Page | None:
                     new_page = new_page_info.value
                     new_page.wait_for_load_state(WAIT_UNTIL, timeout=TIMEOUT)
                 except Exception:
-                    # Sem nova aba — ficou na mesma página
+                    # Sem nova aba — ficou na mea página
                     card.click()
                     page.wait_for_load_state(WAIT_UNTIL, timeout=TIMEOUT)
                     new_page = page
@@ -2804,7 +2798,7 @@ def do_login_iam(page: Page, env: dict, output_dir: Path) -> Page | None:
                 print_warn(f"Card '{module_name}' não encontrado — navegando direto para portal")
                 new_page.goto(portal_url, wait_until=WAIT_UNTIL, timeout=TIMEOUT)
         except Exception as e:
-            print_warn(f"Erro ao clicar no card '{module_name}': {e}")
+            print_warn(f"Erro ao clicar no card '{module_na: {e}")
             new_page = page
 
     # ── Clica no link de início do módulo ────────────────────────
@@ -2816,8 +2810,7 @@ def do_login_iam(page: Page, env: dict, output_dir: Path) -> Page | None:
                 timeout=10_000
             )
             if inicio:
-                print_info(f"Clicando '{inicio_link}'...")
-                inicio.click()
+                print_info(f"Clicando '{inicio_link}'...")           inicio.click()
                 new_page.wait_for_load_state(WAIT_UNTIL, timeout=TIMEOUT)
         except Exception:
             # Se não encontrou o link, tenta navegar direto
@@ -2826,8 +2819,7 @@ def do_login_iam(page: Page, env: dict, output_dir: Path) -> Page | None:
                 full_inicio = f"{base.scheme}://{base.netloc}{inicio_link}"
                 if new_page.url.rstrip("/") != full_inicio.rstrip("/"):
                     new_page.goto(full_inicio, wait_until=WAIT_UNTIL, timeout=TIMEOUT)
-            except Exception:
-                pass
+            except Exception:                pass
 
     return new_page
 
@@ -2836,7 +2828,7 @@ def do_login_iam(page: Page, env: dict, output_dir: Path) -> Page | None:
 # COLETA DE MENU
 # ══════════════════════════════════════════════════════════════════
 
-def collect_menu_links(page: Page, portal_url: str) -> list[dict]:
+def collect_menu_links(page: Page, portal_url: sist[dict]:
     """
     Coleta todos os links do menu via JavaScript puro — sem hover, sem espera.
     Passa base_domain e portal_url como argumento JS para evitar f-string
@@ -2851,7 +2843,7 @@ def collect_menu_links(page: Page, portal_url: str) -> list[dict]:
         const seen    = new Set();
         const results = [];
 
-        const containers = document.querySelectorAll(
+        co containers = document.querySelectorAll(
             'nav, [class*="menu"], [class*="nav"], [class*="sidebar"], ' +
             '[id*="menu"], [id*="nav"], [id*="sidebar"]'
         );
@@ -2883,7 +2875,7 @@ def collect_menu_links(page: Page, portal_url: str) -> list[dict]:
                 for (let i = 0; i < label.length; i++) {
                     const code = label.charCodeAt(i);
                     const isSpace = (code === 32 || code === 9 || code === 10 || code === 13);
-                    if (isSpace) { if (!prevSpace && cleanLabel.length > 0) cleanLabel += ' '; prevSpace = true; }
+                    if (isSpace) { if (!prevSpace && cleanLabel.length > 0) cleanLabel += ' '; prevSce = true; }
                     else { cleanLabel += label[i]; prevSpace = false; }
                 }
                 cleanLabel = cleanLabel.trim();
@@ -2899,7 +2891,7 @@ def collect_menu_links(page: Page, portal_url: str) -> list[dict]:
         raw_links = page.evaluate(JS, [base_domain, portal_url])
     except Exception as e:
         log.warning(f"collect_menu_links JS falhou: {e} — usando fallback Playwright")
-        raw_links = []
+      raw_links = []
         # Fallback: usa query_selector_all do Playwright
         for anchor in page.query_selector_all(SELECTOR_MENU):
             href  = anchor.get_attribute("href") or ""
@@ -2922,7 +2914,7 @@ def collect_menu_links(page: Page, portal_url: str) -> list[dict]:
     log.info(f"Menu coletado: {len(links)} links")
     return links
 
-# ══════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════â════════
 # MAIN
 # ══════════════════════════════════════════════════════════════════
 
@@ -2932,7 +2924,7 @@ def run_single(args, env_key: str, env: dict):
     log_file   = setup_logger(env_key)
     log.info(f"Portal  : {env['portal_url']}")
     log.info(f"IAM     : {env['iam_url']}")
-    log.info(f"Usuário : {env['username']}")
+    log.inforio : {env['username']}")
 
 
 def main():
@@ -2948,7 +2940,7 @@ def main():
         envs_to_run = {k: v for k, v in ENVIRONMENTS.items() if "-" in k}
         if RICH:
             console.print(f"\n[bold cyan]🌍 Executando todos os módulos ({len(envs_to_run)})...[/bold cyan]\n")
-        for env_key, env in envs_to_run.items():
+     v_key, env in envs_to_run.items():
             if RICH:
                 console.print(f"\n[bold yellow]{'='*50}[/bold yellow]")
                 console.print(f"[bold]► {env['name']}[/bold]\n")
@@ -2962,7 +2954,7 @@ def main():
                 continue
         return
 
-    env_key, env = select_environment(args)
+    env_kv = select_environment(args)
 
     # Opção "Todos os módulos" selecionada no menu interativo
     if getattr(args, "_run_all_modules", False):
@@ -2972,7 +2964,7 @@ def main():
                     for k in system.get("modules", {})
                     if f"{sys_key}-{k}" in ENVIRONMENTS}
         if RICH:
-            console.print(f"\n[bold cyan]🌍 Todos os módulos de {system.get('name',sys_key)} ({len(mod_envs)})...[/bold cyan]\n")
+            console.print(f"\n[bold cyan]🌍 Todos os módulos de {syet('name',sys_key)} ({len(mod_envs)})...[/bold cyan]\n")
         for ek, ev in mod_envs.items():
             if RICH:
                 console.print(f"\n[bold yellow]{'='*50}[/bold yellow]")
@@ -2984,7 +2976,7 @@ def main():
                 _run_env(args, ek, ev)
             except SystemExit:
                 print_warn(f"{ek} falhou — continuando...")
-                continue
+          continue
         return
 
     _run_env(args, env_key, env)
@@ -3002,7 +2994,7 @@ def _run_env(args, env_key: str, env: dict):
 
     show_banner(env, Path(f"nossis_prints_{env_key}"))
 
-    # Valida conectividade antes de iniciar (detecta VPN desconectada)
+    # Valida conectivida antes de iniciar (detecta VPN desconectada)
     if not args.dry_run:
         validate_connectivity(env)
 
@@ -3016,7 +3008,7 @@ def _run_env(args, env_key: str, env: dict):
         if saved_session:
             session_file = SESSION_DIR / f"session_{env_key}.json"
             age_min = int((time.time() - session_file.stat().st_mtime) // 60)
-            remaining = int(SESSION_TTL // 60) - age_min
+            emaining = int(SESSION_TTL // 60) - age_min
             print_ok(f"Sessão salva encontrada ({age_min} min — expira em {remaining} min) — pulando login")
             context = _new_optimized_context(browser, saved_session)
         else:
@@ -3028,7 +3020,7 @@ def _run_env(args, env_key: str, env: dict):
         current_label = [""]
         http_errors_map = {}
         def on_response(response):
-            if response.status >= 400:
+            if response.stat 400:
                 lbl = current_label[0]
                 msg = f"HTTP {response.status}: {response.url[:80]}"
                 http_errors_map.setdefault(lbl, []).append(msg)
@@ -3041,7 +3033,7 @@ def _run_env(args, env_key: str, env: dict):
 
         # Login (pula se sessão válida)
         try:
-            temp_dir = Path(f"nossis_prints_{env_key}_temp")
+          temp_dir = Path(f"nossis_prints_{env_key}_temp")
             temp_dir.mkdir(exist_ok=True)
             if saved_session:
                 # Verifica se sessão ainda é válida navegando para o portal
@@ -3053,22 +3045,21 @@ def _run_env(args, env_key: str, env: dict):
                         if response.status in (401, 403):
                             responses_401.append(response.url)
 
-                    page.on("response", _on_response)
+                 page.on("response", _on_response)
                     page.goto(env['portal_url'], wait_until="domcontentloaded", timeout=30_000)
                     page.wait_for_timeout(1500)  # aguarda respostas assíncronas
                     page.remove_listener("response", _on_response)
 
                     # Sessão inválida se: redirecionou para login OU algum 401/403
                     portal_url_host = env['portal_url'].split("/portal")[0]
-                    got_401 = any(portal_url_host in u for u in responses_401)
+                    got_401 = any(portal_url_host in u for u iesponses_401)
 
                     if 'idp/login' in page.url or 'login' in page.url.lower() or got_401:
                         reason = f"HTTP 401 em {len(responses_401)} request(s)" if got_401 else "redirecionado para login"
                         print_warn(f"Sessão expirada ({reason}) — fazendo login novamente...")
                         log.warning(f"Sessão inválida: {reason}")
                         clear_session(env_key)
-                        portal_page = do_login_iam(page, env, temp_dir)
-                        if portal_page:
+                        portal_page = do_login_iam(page, env, temp_dir)                    if portal_page:
                             save_session(context, env_key)
                     else:
                         portal_page = page
@@ -3079,7 +3070,7 @@ def _run_env(args, env_key: str, env: dict):
                     if portal_page:
                         save_session(context, env_key)
             else:
-                portal_page = do_login_iam(page, env, temp_dir)
+               ortal_page = do_login_iam(page, env, temp_dir)
                 # Salva sessão após login bem-sucedido
                 if portal_page:
                     save_session(context, env_key)
@@ -3093,7 +3084,7 @@ def _run_env(args, env_key: str, env: dict):
             sys.exit(0)
         except Exception as e:
             print_err(f"Exceção no login: {e}")
-            browser.close()
+            browserse()
             sys.exit(1)
 
         # Modal Sobre — extrai versão
@@ -3106,7 +3097,7 @@ def _run_env(args, env_key: str, env: dict):
         for sobre_attempt in range(1, MAX_SOBRE_ATTEMPTS + 1):
             try:
                 if sobre_attempt > 1:
-                    print_info(f"Tentativa {sobre_attempt}/{MAX_SOBRE_ATTEMPTS} para capturar modal 'Sobre'...")
+                    print_info(f"Tentativa {sobre_attem_SOBRE_ATTEMPTS} para capturar modal 'Sobre'...")
                     # Fecha modal anterior se ainda estiver aberto
                     try:
                         portal_page.keyboard.press("Escape")
@@ -3115,7 +3106,7 @@ def _run_env(args, env_key: str, env: dict):
                         pass
                     # Recarrega a página para garantir estado limpo
                     portal_page.reload(wait_until="domcontentloaded", timeout=TIMEOUT)
-                    portal_page.wait_for_timeout(2000)
+                    portal_pge.wait_for_timeout(2000)
 
                 # Garante que o portal está carregado
                 portal_page.wait_for_load_state("domcontentloaded", timeout=TIMEOUT)
@@ -3128,7 +3119,7 @@ def _run_env(args, env_key: str, env: dict):
                     "span:has-text('Sobre')",
                     "text=Sobre",
                     "[href*='sobre']",
-                ]:
+              ]:
                     try:
                         portal_page.click(selector, timeout=3_000)
                         clicked = True
@@ -3151,8 +3142,7 @@ def _run_env(args, env_key: str, env: dict):
                 modal_visible = False
                 for modal_sel in ["#nossis-modal", ".modal.in", ".modal[style*='display: block']", ".modal.show"]:
                     try:
-                        portal_page.wait_for_selector(modal_sel, state="visible", timeout=5_000)
-                        modal_visible = True
+                        portal_page.wait_for_selector(modal_sel, state="visible", timeout=5_000                       modal_visible = True
                         break
                     except Exception:
                         continue
@@ -3163,9 +3153,7 @@ def _run_env(args, env_key: str, env: dict):
                         continue  # tenta novamente
 
                 # Extrai a versão — varre TODO o texto do modal procurando padrão X.Y.Z
-                version_raw = ""
-
-                # 1. Seletores específicos conhecidos
+                version_raw = "              # 1. Seletores específicos conhecidos
                 for ver_sel in [".fx-suite-desc p", ".fx-suite-desc", ".modal-body p",
                                 ".modal-body", ".modal-content", "[class*='version']",
                                 "[class*='suite']", "[class*='about']"]:
@@ -3173,7 +3161,7 @@ def _run_env(args, env_key: str, env: dict):
                         version_raw = portal_page.evaluate(f"""
                             () => {{
                                 const el = document.querySelector('{ver_sel}');
-                                return el ? el.innerText.trim() : '';
+                               return el ? el.innerText.trim() : '';
                             }}
                         """)
                         if version_raw and re.search(r'[0-9]+\.[0-9]+', version_raw):
@@ -3183,7 +3171,7 @@ def _run_env(args, env_key: str, env: dict):
                         continue
 
                 # 2. Varre todos os modais visíveis
-                if not version_raw or not re.search(r'[0-9]+\.[0-9]+', version_raw):
+                if not version_raw or not re.search'[0-9]+\.[0-9]+', version_raw):
                     version_raw = portal_page.evaluate("""
                         () => {
                             const modals = document.querySelectorAll(
@@ -3201,7 +3189,7 @@ def _run_env(args, env_key: str, env: dict):
 
                 # 3. Último fallback — busca na página inteira
                 if not version_raw or not re.search(r'[0-9]+\.[0-9]+\.[0-9]+', version_raw):
-                    all_text = portal_page.evaluate("() => document.body ? document.body.innerText : ''")
+                    all_text = portal_page.evaluate("() => document.body ? document.body.iText : ''")
                     m = re.search(
                         r'(?:vers[aã]o|version|v\.tal|tag)[\s:]+([0-9]+\.[0-9]+\.[0-9]+[\w\-\.]*)',
                         all_text, re.IGNORECASE
@@ -3212,7 +3200,7 @@ def _run_env(args, env_key: str, env: dict):
                 if version_raw and re.search(r'[0-9]+\.[0-9]+\.[0-9]+', version_raw):
                     match = re.search(r'[0-9]+\.[0-9]+\.[0-9]+[\w\-\.]*', version_raw)
                     if match:
-                        version_tag = match.group(0)
+                       version_tag = match.group(0)
                     log.info(f"Versão detectada na tentativa {sobre_attempt}: {version_tag}")
                     print_ok(f"Versão: {version_tag}")
                     break  # versão encontrada — sai do loop de tentativas
@@ -3220,7 +3208,7 @@ def _run_env(args, env_key: str, env: dict):
                 # Versão não encontrada nessa tentativa
                 log.warning(f"Versão não encontrada na tentativa {sobre_attempt}/{MAX_SOBRE_ATTEMPTS}")
                 if sobre_attempt == MAX_SOBRE_ATTEMPTS:
-                    # Salva HTML para debug na última tentativa
+                    # Salara debug na última tentativa
                     try:
                         debug_html = portal_page.evaluate("""
                             () => {
@@ -3228,7 +3216,7 @@ def _run_env(args, env_key: str, env: dict):
                                 return m ? m.outerHTML : document.body.innerHTML.substring(0, 3000);
                             }
                         """)
-                        Path("debug_modal.html").write_text(debug_html or "", encoding="utf-8")
+                        Path(output_dir / "debug_modal.html").write_text(debug_html or "", encoding="ut-8")
                         log.warning("HTML do modal salvo em debug_modal.html")
                     except Exception:
                         pass
@@ -3237,9 +3225,7 @@ def _run_env(args, env_key: str, env: dict):
             except Exception as e:
                 log.warning(f"Tentativa {sobre_attempt}/{MAX_SOBRE_ATTEMPTS} falhou: {e}")
                 if sobre_attempt == MAX_SOBRE_ATTEMPTS:
-                    print_warn(f"Versão não detectada: {e}")
-
-        # Define pasta com versão
+                    print_warn(f"Versão não detectada: {e}     # Define pasta com versão
         base_dir = Path(f"nossis_prints_{env_key}_{version_tag}")
         if base_dir.exists():
             ts         = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -3250,8 +3236,7 @@ def _run_env(args, env_key: str, env: dict):
         output_dir.mkdir(parents=True, exist_ok=True)
         log.info(f"Saída: {output_dir.resolve()}")
 
-        # Move debug shots da pasta temp
-        for f in temp_dir.glob("*.png"):
+        # Move debug shots da pasta te      for f in temp_dir.glob("*.png"):
             f.rename(output_dir / f.name)
         try: temp_dir.rmdir()
         except Exception: pass
@@ -3275,7 +3260,7 @@ def _run_env(args, env_key: str, env: dict):
         # Coleta links
         if RICH: console.print(f"\n[bold cyan]🔍 Coletando links do menu...[/bold cyan]")
         else: print("\n🔍 Coletando links do menu...")
-        links = collect_menu_links(portal_page, portal_url)
+   links = collect_menu_links(portal_page, portal_url)
 
         # Aplica filtro --page
         page_filter = [p.strip().lower() for p in args.page.split(",")] if args.page else None
@@ -3293,14 +3278,14 @@ def _run_env(args, env_key: str, env: dict):
                 if skip:         status = "[dim]⏭ ignorar[/dim]"
                 elif filtered:   status = "[dim]⏭ filtrado[/dim]"
                 else:            status = "[green]✓ capturar[/green]"
-                style = "dim" if (skip or filtered) else "white"
+          style = "dim" if (skip or filtered) else "white"
                 table.add_row(str(i), f"[{style}]{item['label']}[/{style}]", status)
             console.print(table)
         else:
             for i, item in enumerate(links, 1):
                 skip     = should_skip(item["label"], item["url"], portal_url)
                 filtered = page_filter and not any(f in item["label"].lower() for f in page_filter)
-                status   = "⏭ ignorar" if skip else ("⏭ filtrado" if filtered else "✓ capturar")
+                status   = "⏭ ignorar" if skip else ("⏭ filtrado" if filtered else "✓ ca")
                 print(f"  {i:>2}. {item['label']:<32} {status}")
 
         to_capture = [
@@ -3313,7 +3298,7 @@ def _run_env(args, env_key: str, env: dict):
         if args.since:
             since_dir = Path(args.since)
             if not since_dir.exists():
-                print_warn(f"--since: pasta não encontrada: {since_dir}")
+                print_warn(f"--since: pasta não encontrad{since_dir}")
             else:
                 ref_hashes = load_hashes(since_dir)
                 before = len(to_capture)
@@ -3323,7 +3308,7 @@ def _run_env(args, env_key: str, env: dict):
 
         if RICH:
             console.print(f"\n[bold]📋 {len(to_capture)} páginas para capturar[/bold] [dim](de {len(links)} encontradas)[/dim]")
-            if args.dry_run:
+            if args.dun:
                 console.print(f"\n[bold yellow]⚡ DRY-RUN — nenhuma captura será feita.[/bold yellow]\n")
         else:
             print(f"\n📋 {len(to_capture)} para capturar (de {len(links)})")
@@ -3338,7 +3323,7 @@ def _run_env(args, env_key: str, env: dict):
             browser.close()
             return
 
-        # ── Captura: paralela ou sequencial ──────────────────────
+        # ── Captura: paralela ou sequencia──────────
         capture_results = []
         errors          = []
         n_threads       = calc_threads(len(to_capture))
@@ -3348,7 +3333,7 @@ def _run_env(args, env_key: str, env: dict):
             # ── MODO PARALELO ─────────────────────────────────────
             # fecha o portal_page do thread principal — workers abrem os seus
             portal_page.close()
-            context.close()
+            con.close()
             browser.close()
 
             capture_results = parallel_capture(
@@ -3361,7 +3346,7 @@ def _run_env(args, env_key: str, env: dict):
             # Exibe resumo do que foi capturado
             if RICH:
                 for r in capture_results:
-                    icon  = "✓" if r["status"] == "ok" else ("⚠" if r["status"] == "aviso" else "✗")
+                    icon  = "✓" if r["status"] == "ok" else ("⚠" if ratus"] == "aviso" else "✗")
                     color = "green" if r["status"] == "ok" else ("yellow" if r["status"] == "aviso" else "red")
                     console.print(f"  [{color}]{icon}[/{color}] {r['label']:<35} {r['time']}")
             else:
@@ -3369,8 +3354,7 @@ def _run_env(args, env_key: str, env: dict):
                     icon = "✓" if r["status"] == "ok" else ("⚠" if r["status"] == "aviso" else "✗")
                     print(f"  {icon} {r['label']:<35} {r['time']}")
 
-            # Marca que browser já foi fechado
-            browser_closed = True
+            # Marca que browser já foi            browser_closed = True
 
         else:
             # ── MODO SEQUENCIAL ───────────────────────────────────
@@ -3378,7 +3362,7 @@ def _run_env(args, env_key: str, env: dict):
             if RICH:
                 with Progress(SpinnerColumn(), TextColumn("[bold cyan]{task.description}[/bold cyan]"),
                               BarColumn(bar_width=30), TaskProgressColumn(),
-                              TextColumn("[dim]{task.fields[label]}[/dim]"), console=console) as progress:
+                              TextColumn("[dim]{task.fields[label]}[/dim]"), consoleas progress:
                     task = progress.add_task("Capturando", total=len(to_capture), label="")
                     for i, item in enumerate(to_capture, 1):
                         label    = item["label"]
@@ -3394,7 +3378,7 @@ def _run_env(args, env_key: str, env: dict):
                         if ok:
                             add_timestamp_watermark(filepath, label)
                             log.info(f"[{i}/{len(to_capture)}] ✓ {filename} ({elapsed_p:.1f}s) {msg}")
-                            http_err = http_errors_map.get(label, [])
+                            http_err = http_errorp.get(label, [])
                             extra_msg = (" | " + "; ".join(http_err[:2])) if http_err else ""
                             status = "aviso" if (msg.startswith("AVISO") or http_err) else "ok"
                             final_msg = (msg if msg.startswith("AVISO") else "") + extra_msg
@@ -3407,8 +3391,7 @@ def _run_env(args, env_key: str, env: dict):
                             capture_results.append({"label": label, "file": str(filepath),
                                                     "status": "erro", "time": f"{elapsed_p:.1f}s", "msg": msg})
                         progress.advance(task)
-            else:
-                for i, item in enumerate(to_capture, 1):
+            else:               for i, item in enumerate(to_capture, 1):
                     label    = item["label"]
                     url      = item["url"]
                     filename = f"{i:02d}_{sanitize(label)}.png"
@@ -3431,7 +3414,7 @@ def _run_env(args, env_key: str, env: dict):
                     else:
                         print(f"✗ ERRO ({args.retries} tentativas)")
                         errors.append((label, url, msg))
-                        capture_results.append({"label": label, "file": str(filepath),
+                        capture_resuappend({"label": label, "file": str(filepath),
                                                 "status": "erro", "time": f"{elapsed_p:.1f}s", "msg": msg})
 
         # Adiciona o Sobre ao relatório
@@ -3440,7 +3423,7 @@ def _run_env(args, env_key: str, env: dict):
                                    "status": "ok" if sobre_path.exists() else "erro",
                                    "time": "—", "msg": ""})
 
-        # Fecha browser se ainda não foi fechado (modo sequencial)
+        # Fecha browser se ainda não fechado (modo sequencial)
         if not browser_closed:
             portal_page.close()
             context.close()
@@ -3453,8 +3436,7 @@ def _run_env(args, env_key: str, env: dict):
     if pdf_path:
         print_ok(f"Relatório PDF : {pdf_path}")
     else:
-        print_info("PDF não gerado — instale weasyprint: pip3 install weasyprint")
-
+        print_info("PDF não gerado — instale Pillow: pip3 install Pil
     # Gera README.txt
     readme_path = generate_readme(output_dir, env, version_tag, capture_results, elapsed, rep_path, pdf_path)
     print_ok(f"README       : {readme_path}")
@@ -3476,15 +3458,15 @@ def _run_env(args, env_key: str, env: dict):
             f"[bold green]✓ OK      :[/bold green] {ok}/{total}\n"
             f"[bold yellow]⚠ Avisos  :[/bold yellow] {warn}\n"
             f"[bold red]✗ Erros   :[/bold red] {err}\n"
-            f"[bold cyan]⏱ Duração :[/bold cyan] {elapsed/60:.1f} min ({elapsed:.0f}s)\n"
+            f"[bold cyan]⏱ Duração :[/bold cyan] {elapsed/60:.1fsed:.0f}s)\n"
             f"[bold cyan]📁 Pasta   :[/bold cyan] {output_dir.resolve()}\n"
             f"[bold cyan]📊 HTML      :[/bold cyan] {rep_path}\n"
-            f"[bold cyan]📄 PDF       :[/bold cyan] {pdf_path or 'pip3 install weasyprint'}\n"
+            f"[bold cyan]📄 PDF       :[/bold cyan] {pdf_path or 'pip3 install Pillow'}\n"
             f"[bold cyan]📋 Log     :[/bold cyan] {log_file.resolve()}\n"
             f"[bold cyan]📝 README  :[/bold cyan] {readme_path}"
         )
         console.print(Panel(summary, title="[bold white]✅ Concluído[/bold white]",
-                            border_style="green", padding=(1, 2)))
+                    r_style="green", padding=(1, 2)))
     else:
         print(f"\n{'═'*60}")
         print(f"  ✓ OK      : {ok}/{total}")
@@ -3493,7 +3475,7 @@ def _run_env(args, env_key: str, env: dict):
         print(f"  ⏱ Duração : {elapsed/60:.1f} min")
         print(f"  📁 Pasta  : {output_dir.resolve()}")
         print(f"  📊 HTML    : {rep_path}")
-        print(f"  📄 PDF     : {pdf_path or 'pip3 install weasyprint'}")
+        print(f"  📄 PDF     : {pdf_path or 'pip3 install Pillow'}")
         print(f"{'═'*60}\n")
 
 
