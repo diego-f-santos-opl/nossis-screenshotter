@@ -855,13 +855,13 @@ def _show_banner():
     if not RICH:
         return
     banner_text = (
-        "[bold cyan]    ___         __       _____                            [/bold cyan]\n"
+        "[bold cyan]    ___         __       _____                                [/bold cyan]\n"
         "[bold cyan]   /   | __  __/ /_____ / ___/_____________  ___  ____        [/bold cyan]\n"
         "[bold cyan]  / /| |/ / / / __/ __ \\__ \\/  ___/ ___/ _ \\/ _ \\/ __ \\  [/bold cyan] \n"
         "[bold cyan] / ___ / /_/ / /_/ /_/ /__/ / /__/ /  /  __/  __/ / / /       [/bold cyan]\n"
         "[bold cyan]/_/  |_\\__,_/\\__/\\____/____/\\___/_/   \\___/\\___/_/ /_/   [/bold cyan]\n"
         "\n"
-        "[bold white]AutoScreen[/bold white] [dim]v7.1  ·  Dieg Santos · diego-f-santos@openlabs.com.br[/dim]"
+        "[bold white]AutoScreen[/bold white] [dim]v7.1  ·  Diego Santos · diego-f-santos@openlabs.com.br[/dim]"
     )
     W = 120
     console.print()
@@ -871,12 +871,12 @@ def _show_banner():
 
 def _pick_system() -> tuple[str, dict]:
     """Passo 1: seleciona o sistema (INT, HML, PRD...)."""
-    sys_keys = list(SYSTEMS.keys())
+    sys_keys list(SYSTEMS.keys())
 
     if RICH:
         W = 120
         table = Table(box=box.ROUNDED, border_style="cyan", show_header=True,
-                      header_style="bold cyan", padding=(0, 2) show_lines=True, width=W)
+                      header_style="bold cyan", padding=(0, 2), show_lines=True, width=W)
         table.add_column("#",       style="bold white",  justify="center", width=5,  no_wrap=True)
         table.add_column("Chave",   style="bold yellow", justify="center", width=10, no_wrap=True)
         table.add_column("Sistema", style="white",       justify="left",   width=40, no_wrap=True)
@@ -900,26 +900,27 @@ def _pick_system() -> tuple[str, dict]:
                     key = sys_keys[idx - 1]
                     return key, SYSTEMS[key]
                 console.print(f"[red]Opção inválida.[/red] Digite 0 a {len(sys_keys)}.")
-            except (ValueError, EOFError):
+            except (ValueEr, EOFError):
                 console.print("[red]Opção inválida.[/red]")
             except KeyboardInterrupt:
                 console.print("\n[dim]Interrompido.[/dim]"); sys.exit(0)
-  :
+    else:
         print("\n┌──────────────────────────────────────────┐")
         print("│   Selecione o sistema                     │")
-        print("├──────────────────────────────────────────┤")
+        print("├─────────────────────────────────────┤")
         for i, (k, s) in enumerate(SYSTEMS.items(), 1):
             print(f"│  {i}. {k.upper():<8}  {s['name']:<28} │")
-        print("â                                 │")
+        print("│  0.  Sair                                 │")
         print("└──────────────────────────────────────────┘")
         while True:
             try:
                 idx = int(input(f"\nOpção [0-{len(sys_keys)}]: ").strip())
-                if idx == 0: sys.exit(0)
+                if sys.exit(0)
                 if 1 <= idx <= len(sys_keys):
                     k = sys_keys[idx - 1]
                     return k, SYSTEMS[k]
-            except (ValueError, EOFErr          except KeyboardInterrupt: sys.exit(0)
+            except (ValueError, EOFError): pass
+            except KeyboardInterrupt: sys.exit(0)
             print("Opção inválida.")
 
 
@@ -929,16 +930,16 @@ def _pick_module(sys_key: str, system: dict) -> tuple[str, dict]:
 
     if RICH:
         W = 120
-        console.print()
-        table = Table(box=box.ROUNDED, border_style="cyan", show_header=True,
+        console.prin        table = Table(box=box.ROUNDED, border_style="cyan", show_header=True,
                       header_style="bold cyan", padding=(0, 2), show_lines=True, width=W)
-        table.add_co("#",       style="bold white",  justify="center", width=5,  no_wrap=True)
+        table.add_column("#",       style="bold white",  justify="center", width=5,  no_wrap=True)
         table.add_column("Módulo",  style="bold yellow", justify="center", width=14, no_wrap=True)
         table.add_column("Nome",    style="white",       justify="left",   width=20, no_wrap=True)
-        table.add_column("Portal",  style="cyan",        justify="left",   width=71, no_wrap=True)
+        table.add_column("Portal",  style="cya",        justify="left",   width=71, no_wrap=True)
 
         for i, (k, m) in enumerate(system["modules"].items(), 1):
-            table.add_row(str(i), k.upper(), m["name"], m["portal_url"])        table.add_section()
+            table.add_row(str(i), k.upper(), m["name"], m["portal_url"])
+        table.add_section()
         table.add_row("[dim]0[/dim]", "[dim]TODOS[/dim]", "[dim]Capturar todos os módulos[/dim]", "")
         table.add_row("[dim]V[/dim]", "[dim]---[/dim]",   "[dim]Voltar[/dim]", "")
         console.print(table)
@@ -946,10 +947,10 @@ def _pick_module(sys_key: str, system: dict) -> tuple[str, dict]:
 
         while True:
             try:
-                choice = Prompt.ask(
+               choice = Prompt.ask(
                     f"[bold cyan]Selecione o módulo[/bold cyan] [dim](0=todos, V=voltar, 1-{len(mod_keys)})[/dim]",
                     default="1"
-                ).str().lower()
+                ).strip().lower()
 
                 if choice == "v":
                     return "__back__", {}
@@ -957,36 +958,36 @@ def _pick_module(sys_key: str, system: dict) -> tuple[str, dict]:
                 if idx == 0:
                     console.print(f"\n[green]✓[/green] Todos os módulos de [bold]{system['name']}[/bold]\n")
                     return "__all__", {}
-                if 1 <= idx <= len(mod_keys):
+               1 <= idx <= len(mod_keys):
                     k = mod_keys[idx - 1]
                     m = system["modules"][k]
-                    console.print(f"\n[green]✓[/green] [bold]{m['name']}[] — {system['name']}\n")
+                    console.print(f"\n[green]✓[/green] [bold]{m['name']}[/bold] — {system['name']}\n")
                     return k, m
                 console.print(f"[red]Opção inválida.[/red]")
             except (ValueError, EOFError):
                 console.print("[red]Opção inválida.[/red]")
             except KeyboardInterrupt:
-                console.print("\n[dim]Interrompido.[/dim]"); sys.exit(0)
+                console.print("\n[dim]Interrompido.sys.exit(0)
     else:
         print(f"\n  Sistema: {system['name']}")
-        print("┌────────────────────────────────┐")
+        print("┌──────────────────────────────────────────┐")
         print("│   Selecione o módulo                      │")
         print("├──────────────────────────────────────────┤")
         for i, (k, m) in enumerate(system["modules"].items(), 1):
-            print(f"│  {i}. {k.upper():<12}  {m['portal_url']:<26} │")
+        rint(f"│  {i}. {k.upper():<12}  {m['portal_url']:<26} │")
         print("│  0.  Todos os módulos                     │")
         print("│  V.  Voltar                               │")
-        prin──────────────────────────────────┘")
+        print("└──────────────────────────────────────────┘")
         while True:
             try:
                 choice = input(f"\nOpção [0-{len(mod_keys)}/V]: ").strip().lower()
-                if choice == "v": return "__back__", {}
+                if choice == "v": return "_", {}
                 idx = int(choice)
                 if idx == 0: return "__all__", {}
                 if 1 <= idx <= len(mod_keys):
                     k = mod_keys[idx - 1]
                     return k, system["modules"][k]
-    except (ValueError, EOFError): pass
+            except (ValueError, EOFError): pass
             except KeyboardInterrupt: sys.exit(0)
             print("Opção inválida.")
 
@@ -994,11 +995,11 @@ def _pick_module(sys_key: str, system: dict) -> tuple[str, dict]:
 def select_environment(args) -> tuple[str, dict]:
     """
     Menu em dois passos: Sistema → Módulo.
-    Suporta CLI direto: args.env = "hml" ou "hml-netwin" ou "hml netwin"
+    Suporta CLI direto: args.env = "hmlhml-netwin" ou "hml netwin"
     """
     # ── CLI direto ───────────────────────────────────────────────
     if args.env:
-        key = alower().strip()
+        key = args.env.lower().strip()
 
         # Formato "hml-netwin" ou "hml netwin" (módulo especificado)
         for sep in ["-", " "]:
@@ -1006,29 +1007,29 @@ def select_environment(args) -> tuple[str, dict]:
                 parts    = key.split(sep, 1)
                 sys_key  = parts[0]
                 mod_key  = parts[1]
-                if sys_key in SYSTEMS and mod_key in SYSTEMS[sys_key]["modules"]:
+             if sys_key in SYSTEMS and mod_key in SYSTEMS[sys_key]["modules"]:
                     env_key = f"{sys_key}-{mod_key}"
                     return env_key, ENVIRONMENTS[env_key]
 
-        # Formato "hml" (só sistema → usa primeiro mÃ
+        # Formato "hml" (só sistema → usa primeiro módulo)
         if key in SYSTEMS:
             first_mod = next(iter(SYSTEMS[key]["modules"]))
             env_key   = f"{key}-{first_mod}"
             return env_key, ENVIRONMENTS[env_key]
 
         # Formato legado "hml-netwin" direto no ENVIRONMENTS
-        if key in ENVIRONMENTS:
+        if key in ENVIENTS:
             return key, ENVIRONMENTS[key]
 
         available = list(SYSTEMS.keys()) + list(ENVIRONMENTS.keys())
         if RICH:
             console.print(f"[red]❌ '{key}' não encontrado.[/red]")
-            console.print(f"   Dispveis: [cyan]{', '.join(available)}[/cyan]")
+            console.print(f"   Disponíveis: [cyan]{', '.join(available)}[/cyan]")
         else:
             print(f"❌ '{key}' não encontrado. Disponíveis: {', '.join(available)}")
         sys.exit(1)
 
-    # ── Menu interativo ──────────────────────────────────────────
+    # ── Menu interativo ──────────────────────────────
     _show_banner()
 
     while True:
@@ -1036,28 +1037,29 @@ def select_environment(args) -> tuple[str, dict]:
         mod_key, module = _pick_module(sys_key, system)
 
         if mod_key == "__back__":
-            continue a seleção de sistema
+            continue  # volta para seleção de sistema
 
         if mod_key == "__all__":
             # Retorna o primeiro módulo mas sinaliza para rodar todos
             first_mod = next(iter(system["modules"]))
             args.__dict__["_run_all_modules"] = True
             args.__dict__["_system_key"]      = sys_key
-            env_key = f"{sys_key}-{first_mod}"
+ key = f"{sys_key}-{first_mod}"
             return env_key, ENVIRONMENTS[env_key]
 
         env_key = f"{sys_key}-{mod_key}"
         return env_key, ENVIRONMENTS[env_key]
 
 
-# ══════════â══════════════════════════════════════════════
-# UTILITÁRIOS
 # ══════════════════════════════════════════════════════════════════
+# UTILITÁRIOS
+# ═══════════════════════════════════════════════════════════
 
 def sanitize(text: str) -> str:
     text = re.sub(r'[\\/:*?"<>|]', "_", text)
     text = re.sub(r'\s+', "_", text.strip())
-    return text[:80] or "pagin
+    return text[:80] or "pagina"
+
 
 def should_skip(label: str, url: str, portal_url: str) -> bool:
     if url.rstrip("/") == portal_url.rstrip("/"): return True
@@ -1066,7 +1068,7 @@ def should_skip(label: str, url: str, portal_url: str) -> bool:
     return False
 
 
-# Textos que indicam carregamento em andamento
+# Textos qudicam carregamento em andamento
 LOADING_TEXTS = [
     "A carregar página",
     "A carregar pagina",
@@ -1074,7 +1076,7 @@ LOADING_TEXTS = [
     "Carregando conteúdo",
     "Carregando...",
     "Carregando",
-    "Aguar por favor",
+    "Aguarde, por favor",
     "Por favor aguarde",
     "Loading",
 ]
@@ -1086,7 +1088,7 @@ def is_page_loading(page: Page) -> str | None:
     """
     for text in LOADING_TEXTS:
         try:
-            el = page.query_selector(f"text={text}")
+            el = paery_selector(f"text={text}")
             if el and el.is_visible():
                 return text
         except Exception:
@@ -1094,19 +1096,19 @@ def is_page_loading(page: Page) -> str | None:
     return None
 
 
-def wait_for_page_ready(page: Page, label: st= "", extra_on_loading: int = 3000):
+def wait_for_page_ready(page: Page, label: str = "", extra_on_loading: int = 3000):
     """
     Aguarda a página estar pronta de forma inteligente:
     - Espera todos os textos de loading sumirem (até 45s)
     - Se spinner ainda visível após espera → aguarda mais extra_on_loading ms
     - Aplica wait extra configurado por página (EXTRA_WAIT)
-    """
+
     # Aguarda qualquer texto de loading sumir
     waited_for_spinner = False
     for text in LOADING_TEXTS:
         try:
             el = page.query_selector(f"text={text}")
-            if el and el.ile():
+            if el and el.is_visible():
                 page.wait_for_selector(f"text={text}", state="hidden", timeout=45_000)
                 page.wait_for_timeout(300)
                 waited_for_spinner = True
@@ -1119,7 +1121,7 @@ def wait_for_page_ready(page: Page, label: st= "", extra_on_loading: int = 3000)
     # Wait extra para páginas configuradas
     extra = next((ms for key, ms in EXTRA_WAIT.items() if key.lower() in label.lower()), 0)
     if extra:
-        print_info(f"+{extra//1000}s extra para '{lbel}'...")
+        print_info(f"+{extra//1000}s extra para '{label}'...")
         page.wait_for_timeout(extra)
 
 
@@ -1131,13 +1133,13 @@ def debug_shot(page: Page, nome: str, output_dir: Path):
         pass
 
 
-def _analyze_image(filepath: Path) -> tuple[bool, str]:
+def _analyze_imae(filepath: Path) -> tuple[bool, str]:
     """
     Analisa o screenshot via Pillow para detectar páginas não carregadas.
     Retorna (ok, motivo).
 
     Técnicas usadas:
-    - Uniformidade de cor: página ba/cinza sólida = não carregou
+    - Uniformidade de cor: página branca/cinza sólida = não carregou
     - Variância de pixel: imagem com pouca variação = provavelmente vazia
     - Detecção de cor dominante: se >90% da imagem for de uma única cor = suspeito
     - Detecção de spinner circular: analisa região central buscando padrão radial
@@ -1149,50 +1151,50 @@ def _analyze_image(filepath: Path) -> tuple[bool, str]:
         if not filepath.exists() or filepath.stat().st_size < 5_000:
             return False, "Arquivo muito pequeno ou inexistente"
 
-   Img.open(filepath).convert("RGB")
+        img = _Img.open(filepath).convert("RGB")
         w, h = img.size
 
         # ── A. Variância geral da imagem ────────────────────────
         # Página com pouca variação = branca, cinza ou de cor sólida
         stat = ImageStat.Stat(img)
-        # stddev de cada canal R, G, B
+ stddev de cada canal R, G, B
         stddev_avg = sum(stat.stddev) / 3
         if stddev_avg < 3:  # só marca se for quase completamente uniforme
-            return False, f"Imagem sem variacao (stddev={stddev_avg:gina branca/solida"
+            return False, f"Imagem sem variacao (stddev={stddev_avg:.1f}) — pagina branca/solida"
 
         # ── B. Cor dominante na região central ──────────────────
         # Recorta 50% central e verifica se é quase uniforme
         cx1, cy1 = w // 4, h // 4
         cx2, cy2 = 3 * w // 4, 3 * h // 4
-        center   = img.crop((cx1, cy1, cx2, cy2))
+        center   =1, cy1, cx2, cy2))
         c_stat   = ImageStat.Stat(center)
         c_std    = sum(c_stat.stddev) / 3
         if c_std < 6:
-            return False, f"Centro da imagem uniforme (stddev={c_std:.1f}) — conteudo n
+            return False, f"Centro da imagem uniforme (stddev={c_std:.1f}) — conteudo nao carregou"
 
         # ── C. Proporção de pixels brancos/cinzas ───────────────
         # Amostra uma grade de pixels e conta quantos são quase brancos
         sample_step = max(1, w // 40)
         total = white = 0
         for px in range(0, w, sample_step):
-            for py in range(0, h, sample_step):
+     for py in range(0, h, sample_step):
                 r, g, b = img.getpixel((px, py))
                 total += 1
                 # pixel quase branco: todos canais > 240
-                if r > 240 and g > 240 and b :
+                if r > 240 and g > 240 and b > 240:
                     white += 1
         white_pct = (white / total * 100) if total > 0 else 0
         if white_pct > 97:  # só marca se for quase 100% branca
             return False, f"Imagem {white_pct:.0f}% branca — pagina nao renderizou"
 
-        # Detecção de spinner visual removida — causa falsos positivos
+        # Detecção de spinner visual rea — causa falsos positivos
         # em páginas com layout de painel lateral (centro naturalmente uniforme)
 
         return True, "ok"
 
     except ImportError:
         return True, "ok (Pillow nao disponivel)"
-    exeption as e:
+    except Exception as e:
         log.debug(f"Analise de imagem falhou: {e}")
         return True, "ok (analise ignorada)"
 
@@ -1200,10 +1202,11 @@ def _analyze_image(filepath: Path) -> tuple[bool, str]:
 def validate_screenshot(page: Page, filepath: Path) -> tuple[bool, str]:
     """
     Validação completa em duas camadas:
-    1. DOM/Browser — spinner, aria-busy, conteúdo, URL
-    2. Imagem      — análise visual via Pillow (variância, cor dominante, spinner)
+    1. DOM/Browser — spinner, aria-busy, conteú    2. Imagem      — análise visual via Pillow (variância, cor dominante, spinner)
     """
-    # ── CAMADA 1: Validação via DOM ───────────────────────────    # 1. URL suspeita (redirecionou para login/erro)
+    # ── CAMADA 1: Validação via DOM ──────────────────────────────
+
+    # 1. URL suspeita (redirecionou para login/erro)
     current_url = page.url.lower()
     for indicator in ERROR_INDICATORS:
         if indicator in current_url:
@@ -1211,14 +1214,14 @@ def validate_screenshot(page: Page, filepath: Path) -> tuple[bool, str]:
 
     # 2. Título com erro
     try:
-        title = page.title().lower()
+        title = page.title())
         for indicator in ["error", "404", "403", "acesso negado", "not found"]:
             if indicator in title:
                 return False, f"Titulo suspeito: {page.title()}"
     except Exception:
         pass
 
-    #3. Spinner visível por texto
+    # 3. Spinner visível por texto
     try:
         loading_texts = [
             "text=A carregar página",
@@ -1227,13 +1230,13 @@ def validate_screenshot(page: Page, filepath: Path) -> tuple[bool, str]:
             "text=Carregando",
             "text=Loading",
             "text=Por favor aguarde",
-        ]
+      
         for sel in loading_texts:
             try:
                 el = page.query_selector(sel)
                 if el and el.is_visible():
                     return False, f"Spinner visivel: '{sel}'"
-            exceptception:
+            except Exception:
                 continue
     except Exception:
         pass
@@ -1242,22 +1245,22 @@ def validate_screenshot(page: Page, filepath: Path) -> tuple[bool, str]:
     try:
         # Classes de layout que contêm "loading" no nome mas NÃO são spinners
         FALSE_POSITIVE_CLASSES = [
-            "loading-block",    # bloco de layout fixo do portal
+            "loading-block",    # bloco deout fixo do portal
             "loading-bar",      # barra decorativa
             "loading-container",
         ]
 
         spinner_found = page.evaluate("""() => {
-            // Só busca elementos pequenos (spinners sãcamente < 200x200px)
+            // Só busca elementos pequenos (spinners são tipicamente < 200x200px)
             // e que não sejam elementos de layout estrutural
             const candidates = document.querySelectorAll(
                 '.spinner, .loader, [class*="spinner"], [class*="loader"]'
             );
             for (const el of candidates) {
-                const s   = window.getComputedStyle(el);
+             const s   = window.getComputedStyle(el);
                 const rect = el.getBoundingClientRect();
                 if (s.display !== 'none' && s.visibility !== 'hidden'
-                        && s.opacity !== '0' && el.ofsetParent !== null
+                        && s.opacity !== '0' && el.offsetParent !== null
                         && rect.width < 300 && rect.height < 300) {
                     return el.className || el.tagName;
                 }
@@ -1281,17 +1284,18 @@ def validate_screenshot(page: Page, filepath: Path) -> tuple[bool, str]:
         pass
 
     # 6. Conteúdo mínimo no body
-    try:
+  try:
         body_len = page.evaluate(
             "() => document.body ? document.body.innerText.trim().length : 0"
         )
         if body_len < 30:
-            return False, f"Conteudo insuficiente ({body_len} chars)"   except Exception:
+            return False, f"Conteudo insuficiente ({body_len} chars)"
+    except Exception:
         pass
 
     # ── CAMADA 2: Validação visual via Pillow ────────────────────
     # Só aplica análise de imagem se o arquivo for muito pequeno
-    # (evita falsos positivos em páginas com layout lateral ou centro vazio)
+    # (evita falsos positivos em páginas com layout lateral ou centro vzio)
     if filepath.exists() and filepath.stat().st_size < 15_000:
         img_ok, img_motivo = _analyze_image(filepath)
         if not img_ok:
@@ -1300,60 +1304,60 @@ def validate_screenshot(page: Page, filepath: Path) -> tuple[bool, str]:
     return True, "ok"
 
 
-defcapture_with_retry(page: Page, url: str, filepath: Path, label: str, retries: int) -> tuple[bool, str]:
+def capture_with_retry(page: Page, url: str, filepath: Path, label: str, retries: int) -> tuple[bool, str]:
     """
     Navega, espera carregamento e tira screenshot com retry automático.
     Retorna (sucesso, motivo_erro).
     """
     last_error = ""
     for attempt in range(1 + retries):
-        try:
+       try:
             if attempt > 0:
                 print_warn(f"Retry {attempt}/{retries} para '{label}'...")
                 page.wait_for_timeout(1000 * attempt)  # backoff: 1s, 2s, 3s...
 
-            page.goto(url, ait_until=WAIT_UNTIL, timeout=TIMEOUT)
+            page.goto(url, wait_until=WAIT_UNTIL, timeout=TIMEOUT)
             wait_for_page_ready(page, label)
 
             # ── Verifica loading ANTES de tirar o screenshot ────────
             # Se ainda há texto de carregamento → aguarda mais antes de capturar
-            loading_check_rounds = 3
+            loading_check_ro3
             for _ in range(loading_check_rounds):
                 still_loading = is_page_loading(page)
                 if not still_loading:
                     break
-                extra_wait = 5_000 if attempt =e 8_000
+                extra_wait = 5_000 if attempt == 0 else 8_000
                 print_warn(f"Pagina '{label}' ainda carregando ('{still_loading}') — aguardando +{extra_wait//1000}s...")
                 log.warning(f"Loading detectado antes do screenshot [{label}]: '{still_loading}' — +{extra_wait}ms")
-                page.wait_for_timeout(extra_wait)
+                page.wait_for_timeoutra_wait)
                 # Tenta esperar o elemento sumir
                 try:
                     page.wait_for_selector(f"text={still_loading}", state="hidden", timeout=15_000)
-                    page.wait_for_timeout)
+                    page.wait_for_timeout(500)
                 except Exception:
                     pass
 
             # Screenshot
             page.screenshot(path=str(filepath), full_page=True, animations="disabled")
 
-            # ── Validação pós-screenshot ────────────────────────────
+            # ── Validação pós-screenshot ─────────────────────â────
             ok, motivo = validate_screenshot(page, filepath)
             if not ok:
                 log.warning(f"Validacao [{label}] tentativa {attempt+1}: {motivo}")
-                if attempt < retrie        extra_retry = 5_000 + (attempt * 3_000)  # 5s, 8s, 11s...
+                if attempt < retries:
+                    extra_retry = 5_000 + (attempt * 3_000)  # 5s, 8s, 11s...
                     print_warn(f"Pagina incompleta '{label}' — aguardando +{extra_retry//1000}s e retentando... ({motivo})")
-                    # Se redirecionou para login, navega de volta ao portal antes de retentar
-                    if "idp/login" in page.url.lower():
+                    # Se redirecionou para login, navega de volta ao portal antes de                  if "idp/login" in page.url.lower():
                         try:
                             # Tenta navegar direto para a URL — se sessão ainda válida funciona
-                            page.goto(urt_until="domcontentloaded", timeout=TIMEOUT)
+                            page.goto(url, wait_until="domcontentloaded", timeout=TIMEOUT)
                         except Exception:
                             pass
                     else:
                         page.wait_for_timeout(extra_retry)
                     last_error = motivo
                     continue
-                else:
+            else:
                     log.error(f"Validacao falhou apos {1+retries} tentativas [{label}]: {motivo}")
                     return True, f"NOK: {motivo}"
 
@@ -1372,15 +1376,15 @@ defcapture_with_retry(page: Page, url: str, filepath: Path, label: str, retries:
     return False, last_error
 
 
-# ══════════════════════════════════════════════════════════════
-# CAPTURA PARALELA (multi-thread)
 # ══════════════════════════════════════════════════════════════════
+# CAPTURA PARALELA (multi-thread)
+# ═══════════════════════════════════════════â══════════
 
 def calc_threads(n_pages: int) -> int:
     """
     Calcula número de threads baseado no total de páginas.
       < 10 páginas → 1 thread
-      10–19        → 2ads
+      10–19        → 2 threads
       20–29        → 2 threads  (evita sobrecarga em portais lentos)
       >= 30        → 3 threads
     Limita a 3 para não sobrecarregar o portal.
@@ -1393,10 +1397,10 @@ def calc_threads(n_pages: int) -> int:
         return 3
 
 
-def _worker_capture(worker_id: int, items: list, output_dir: Path,
+def _worker_capture(worker_id: tems: list, output_dir: Path,
                     env: dict, session_file: Path, retries: int,
                     results_list: list, lock: threading.Lock,
-                    http_errors_map: dict) -
+                    http_errors_map: dict) -> None:
     """
     Worker que roda em thread separada:
     - abre browser próprio com sessão compartilhada
@@ -1406,13 +1410,14 @@ def _worker_capture(worker_id: int, items: list, output_dir: Path,
     from playwright.sync_api import sync_playwright
 
     try:
-        session_data = json.loads(session_file.read_text()) if session_file.exists() else None
+        session_data = json.loads(ssion_file.read_text()) if session_file.exists() else None
     except Exception:
         session_data = None
 
     with sync_playwright() as p:
         browser = p.chromium.launch(
-            headless=True,           args=["--no-sandbox", "--ignore-certificate-errors",
+            headless=True,
+            args=["--no-sandbox", "--ignore-certificate-errors",
                   "--disable-web-security"]
         )
         ctx_args = dict(
@@ -1450,25 +1455,24 @@ def _worker_capture(worker_id: int, items: list, output_dir: Path,
             ok, msg = capture_with_retry(page, url, filepath, label, retries)
             elapsed_p = time.time() - t0
 
-            if ok:
-                add_timestamp_watermark(filepath, label)
+            if ok:               add_timestamp_watermark(filepath, label)
                 http_err  = local_http_errors.get(label, [])
                 extra_msg = (" | " + "; ".join(http_err[:2])) if http_err else ""
-              status    = "aviso" if (msg.startswith("AVISO") or http_err) else "ok"
+                status    = "aviso" if (msg.startswith("AVISO") or http_err) else "ok"
                 final_msg = (msg if msg.startswith("AVISO") else "") + extra_msg
                 result = {"label": label, "file": str(filepath),
                           "status": status, "time": f"{elapsed_p:.1f}s",
                           "msg": final_msg.strip(" |").strip(), "_idx": idx}
                 log.info(f"[worker-{worker_id}] ✓ {filename} ({elapsed_p:.1f}s)")
             else:
-                result = {"label": lel, "file": str(filepath),
+                result = {"label": label, "file": str(filepath),
                           "status": "erro", "time": f"{elapsed_p:.1f}s",
                           "msg": msg, "_idx": idx}
                 log.error(f"[worker-{worker_id}] ✗ {label}: {msg}")
 
             with lock:
                 results_list.append(result)
-                # merge erros HTTP
+              merge erros HTTP
                 for k, v in local_http_errors.items():
                     http_errors_map.setdefault(k, []).extend(v)
 
@@ -1477,19 +1481,19 @@ def _worker_capture(worker_id: int, items: list, output_dir: Path,
         browser.close()
 
 
-d parallel_capture(to_capture: list, output_dir: Path, env: dict,
+def parallel_capture(to_capture: list, output_dir: Path, env: dict,
                      session_file: Path, retries: int,
                      http_errors_map: dict) -> list:
     """
     Divide to_capture em chunks e roda N threads em paralelo.
     Cada thread tem sua própria barra de progresso Rich.
-    Retorna lista de resultados ordenada por índice original.
+   Retorna lista de resultados ordenada por índice original.
     """
     n         = len(to_capture)
     n_threads = calc_threads(n)
 
     # Injeta índice global em cada item
-    for i, item in enumerate(to_care, 1):
+    for i, item in enumerate(to_capture, 1):
         item["_idx"] = i
 
     if n_threads == 1:
@@ -1498,13 +1502,13 @@ d parallel_capture(to_capture: list, output_dir: Path, env: dict,
     # Divide em chunks balanceados (round-robin para distribuição uniforme)
     chunks = [[] for _ in range(n_threads)]
     for i, item in enumerate(to_capture):
-        chunks[i % n_threads].append(item)
+        chunks[i % n_ads].append(item)
 
     if RICH:
         console.print(
             f"\n[bold cyan]⚡ Multi-thread:[/bold cyan] "
             f"[white]{n} páginas → {n_threads} threads "
-            f"(~{n//n_threads} pcada)[/white]\n"
+            f"(~{n//n_threads} páginas cada)[/white]\n"
         )
     else:
         print(f"\n⚡ Multi-thread: {n} páginas → {n_threads} threads (~{n//n_threads} cada)")
@@ -1515,11 +1519,11 @@ d parallel_capture(to_capture: list, output_dir: Path, env: dict,
     lock               = threading.Lock()
 
     if RICH:
-        # ── Barras de progresso por thread ───────────────────────
+        # âogresso por thread ───────────────────────
         THREAD_COLORS = ["cyan", "magenta", "yellow", "green"]
 
         with Progress(
-            SpinnerC
+            SpinnerColumn(),
             TextColumn("[bold]{task.description}[/bold]"),
             BarColumn(bar_width=28),
             TaskProgressColumn(),
@@ -1528,8 +1532,7 @@ d parallel_capture(to_capture: list, output_dir: Path, env: dict,
             transient=False,
         ) as progress:
 
-            # Cria uma task por thread
-            tasks = {}
+            # Cria uma task por th   tasks = {}
             for wid, chunk in enumerate(chunks, 1):
                 if not chunk:
                     continue
@@ -1576,18 +1579,17 @@ d parallel_capture(to_capture: list, output_dir: Path, env: dict,
                         log.info(f"[T{worker_id}] [{idx}] {label} → {url}")
 
                         # Verifica se sessão expirou antes de capturar
-                        if "idp/login" in page.url.lower():
+                        if "idp/login" in pagel.lower():
                             log.warning(f"[T{worker_id}] Sessão expirada — tentando reconectar...")
                             try:
-                                page.goto(ortal_url"], wait_until="domcontentloaded", timeout=30_000)
+                                page.goto(env["portal_url"], wait_until="domcontentloaded", timeout=30_000)
                             except Exception:
                                 pass
 
                         ok, msg = capture_with_retry(page, url, filepath, label, retries)
                         elapsed_p = time.time() - t0
 
-                        if ok:
-                            add_timestamp_watermark(filepath, label)
+                        if ok                           add_timestamp_watermark(filepath, label)
                             http_err  = local_http.get(label, [])
                             extra_msg = (" | " + "; ".join(http_err[:2])) if http_err else ""
                             status    = "nok" if msg.startswith("NOK") else ("aviso" if (msg.startswith("AVISO") or http_err) else "ok")
@@ -1599,11 +1601,11 @@ d parallel_capture(to_capture: list, output_dir: Path, env: dict,
                         else:
                             result = {"label": label, "file": str(filepath),
                                       "status": "erro", "time": f"{elapsed_p:.1f}s",
-                                      "msg": msg, "_idx": idx}
+                                    "msg": msg, "_idx": idx}
                             log.error(f"[T{worker_id}] ✗ {label}: {msg}")
 
                         with lock:
-                            results_list.nd(result)
+                            results_list.append(result)
                             for k, v in local_http.items():
                                 http_errors_map.setdefault(k, []).extend(v)
 
@@ -1613,7 +1615,7 @@ d parallel_capture(to_capture: list, output_dir: Path, env: dict,
 
             # Dispara threads
             threads = []
-            for wid, chunk in enumerate(chunks, 1):
+          for wid, chunk in enumerate(chunks, 1):
                 if not chunk:
                     continue
                 t = threading.Thread(target=_worker_with_progress,
@@ -1626,8 +1628,7 @@ d parallel_capture(to_capture: list, output_dir: Path, env: dict,
                 t.join()
 
     else:
-        # ── Fallback sem Rich — progresso simples no terminal ─────
-        def _worker_simple(worker_id, chunk):
+        # ── Fallback sem Rich — progresso simples no terminal ───â_worker_simple(worker_id, chunk):
             from playwright.sync_api import sync_playwright
             try:
                 sd = json.loads(session_file.read_text()) if session_file.exists() else None
@@ -1649,25 +1650,26 @@ d parallel_capture(to_capture: list, output_dir: Path, env: dict,
                     if "idp/login" in page.url.lower():
                         log.warning(f"[T{worker_id}] Sessão expirada durante captura — tentando reconectar...")
                         try:
-                            page.goto(env["portal_url"], wait_until="domcontentloaded", timeout=30_000)
+                        page.goto(env["portal_url"], wait_until="domcontentloaded", timeout=30_000)
                             if "idp/login" in page.url.lower():
-                            log.error(f"[T{worker_id}] Sessão inválida — não foi possível reconectar")
+                                log.error(f"[T{worker_id}] Sessão inválida — não foi possível reconectar")
                         except Exception:
                             pass
 
                     ok, msg = capture_with_retry(page, url, filepath, label, retries)
                     elapsed_p = time.time() - t0
-                    status = "ok" if ok else "erro"
+                    status = "ok" if ok erro"
                     icon   = "✓" if ok else "✗"
                     with lock:
-                        results_list.append({"label": label, "file": str(filepath)                                      "status": status, "time": f"{elapsed_p:.1f}s",
+                        results_list.append({"label": label, "file": str(filepath),
+                                              "status": status, "time": f"{elapsed_p:.1f}s",
                                               "msg": msg, "_idx": idx})
                         print(f"  [T{worker_id}] {icon} {label:<30} {elapsed_p:.1f}s")
 
                 page.close(); ctx.close(); br.close()
 
         threads = []
-        for wid, chunk in enumerate(chunks, 1):
+        for, chunk in enumerate(chunks, 1):
             if not chunk:
                 continue
             t = threading.Thread(target=_worker_simple, args=(wid, chunk),
@@ -1682,15 +1684,15 @@ d parallel_capture(to_capture: list, output_dir: Path, env: dict,
     return results_list
 
 
-# ══════════════════════════════════════════════════════════════════
+# ══════════════════════â════════════════════════════
 # COMPARAÇÃO DE SCREENSHOTS
-# ════â═════════════════════════════════════════════
+# ══════════════════════════════════════════════════════════════════
 
 def compare_screenshots(dir1: str, dir2: str):
     """Compara screenshots entre duas pastas e gera relatório HTML de diferenças."""
     p1, p2 = Path(dir1), Path(dir2)
 
-    if not p1.exists() or not p2.exists():
+    if not p1.exists(or not p2.exists():
         print_err(f"Pastas não encontradas: {dir1}, {dir2}")
         sys.exit(1)
 
@@ -1705,10 +1707,10 @@ def compare_screenshots(dir1: str, dir2: str):
     else:
         print(f"\n🔍 Comparando: {dir1} vs {dir2}")
 
-    files1 = {f.name: f for f in p1.glob("*.png") if not f.name.startswith("debug_")}
+les1 = {f.name: f for f in p1.glob("*.png") if not f.name.startswith("debug_")}
     files2 = {f.name: f for f in p2.glob("*.png") if not f.name.startswith("debug_")}
 
-    ailes = sorted(set(files1) | set(files2))
+    all_files = sorted(set(files1) | set(files2))
     results   = []
 
     for fname in all_files:
@@ -1718,12 +1720,12 @@ def compare_screenshots(dir1: str, dir2: str):
             results.append({"file": fname, "status": "novo",    "diff_pct": None, "msg": "Só em DIR2"})
             continue
         if not f2:
-            results.append({"file": fname, "status": "removido","diff_pct": None, "msg": "Só em DIR1"})
+            results.append({file": fname, "status": "removido","diff_pct": None, "msg": "Só em DIR1"})
             continue
 
         # Compara pixels
         try:
-            img1 = Image.open(f1).conve("RGB")
+            img1 = Image.open(f1).convert("RGB")
             img2 = Image.open(f2).convert("RGB")
 
             if img1.size != img2.size:
@@ -1732,7 +1734,7 @@ def compare_screenshots(dir1: str, dir2: str):
             arr1  = np.array(img1, dtype=np.int16)
             arr2  = np.array(img2, dtype=np.int16)
             diff  = np.abs(arr1 - arr2)
-            pct   = float((diff > 10).any(axis=2).mean() * 100)
+            pct   = float((diff > 0).any(axis=2).mean() * 100)
 
             if pct < 1:
                 status = "igual"
@@ -1746,13 +1748,13 @@ def compare_screenshots(dir1: str, dir2: str):
         except Exception as e:
             results.append({"file": fname, "status": "erro", "diff_pct": None, "msg": str(e)})
 
-    # Gera relatório HTML
+    # Gera relatório HTM
     out_dir  = Path("comparacoes")
     out_dir.mkdir(exist_ok=True)
     ts       = datetime.now().strftime("%Y%m%d_%H%M%S")
     out_html = out_dir / f"comparacao_{ts}.html"
 
-   _generate_compare_html(out_html, dir1, dir2, results)
+    _generate_compare_html(out_html, dir1, dir2, results)
 
     # Exibe resumo
     igual    = sum(1 for r in results if r["status"] == "igual")
@@ -1770,9 +1772,9 @@ def compare_screenshots(dir1: str, dir2: str):
 
         for r in results:
             status = r["status"]
-            color  = {"igual": "dim", "pequena": "yellow", "grande": "red",
+            color  = {"igual": "dim", "pequen": "yellow", "grande": "red",
                       "novo": "green", "removido": "red", "erro": "red"}.get(status, "white")
-            diff   = f"{r['diff_pct']:.1f}%" if r.gt("diff_pct") is not None else r.get("msg", "—")
+            diff   = f"{r['diff_pct']:.1f}%" if r.get("diff_pct") is not None else r.get("msg", "—")
             table.add_row(f"[{color}]{r['file']}[/{color}]",
                           f"[{color}]{status}[/{color}]",
                           f"[{color}]{diff}[/{color}]")
@@ -1780,35 +1782,35 @@ def compare_screenshots(dir1: str, dir2: str):
 
         summary = (
             f"[dim]Iguais  :[/dim] {igual}    "
-            f"[yellow]Pequenas:[/yellow] {pequena}    "
+            [yellow]Pequenas:[/yellow] {pequena}    "
             f"[red]Grandes :[/red] {grande}    "
             f"[green]Novos   :[/green] {novo}    "
-            f"[red]Removidos:[/r] {removido}\n"
+            f"[red]Removidos:[/red] {removido}\n"
             f"[bold cyan]Relatório:[/bold cyan] {out_html.resolve()}"
         )
         console.print(Panel(summary, border_style="cyan", padding=(0, 2)))
     else:
         for r in results:
             diff = f"{r['diff_pct']:.1f}%" if r.get("diff_pct") is not None else ""
-            print(f"  {r['status']:>10}  {r['file']}  {diff}")
+            print(f"  {r['status']:>10}  {r[file']}  {diff}")
         print(f"\nRelatório: {out_html.resolve()}")
 
 
 def _generate_compare_html(out_html: Path, dir1: str, dir2: str, results: list):
-    now = datetime.no).strftime("%d/%m/%Y %H:%M:%S")
+    now = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     rows = ""
     for r in results:
         status = r["status"]
         color  = {"igual": "#4caf50", "pequena": "#ff9800", "grande": "#f44336",
                   "novo": "#2196f3", "removido": "#9e9e9e", "erro": "#f44336"}.get(status, "#fff")
-        diff   = f"{r['diff_pct']:.1f}%" if r.get("diff_pct") is not None else r.get("msg", "—")
+        diff   = f"{r['diff_pct']:.1f}%" if r.get("diff_pc") is not None else r.get("msg", "—")
         img1   = f'<img src="{r.get("f1","")}" style="max-width:100%;border-radius:4px">' if r.get("f1") else "<em>—</em>"
-        img= f'<img src="{r.get("f2","")}" style="max-width:100%;border-radius:4px">' if r.get("f2") else "<em>—</em>"
+        img2   = f'<img src="{r.get("f2","")}" style="max-width:100%;border-radius:4px">' if r.get("f2") else "<em>—</em>"
         rows += f"""
         <tr>
             <td><strong>{r['file']}</strong></td>
             <td><span style="background:{color};padding:3px 10px;border-radius:12px;color:#fff;font-size:12px">{status}</span></td>
-            <td style="text-align:right">{diff}</td>
+      <td style="text-align:right">{diff}</td>
             <td>{img1}</td>
             <td>{img2}</td>
         </tr>"""
@@ -1816,15 +1818,15 @@ def _generate_compare_html(out_html: Path, dir1: str, dir2: str, results: list):
     html = f"""<!DOCTYPE html>
 <html lang="pt">
 <head>
-<metcharset="UTF-8">
+<meta charset="UTF-8">
 <title>Comparação NOSSIS — {now}</title>
 <style>
   body {{ font-family: monospace; background:#1a1a2e; color:#e0e0e0; margin:0; padding:20px }}
   h1   {{ color:#00b5cc; border-bottom:1px solid #333; padding-bottom:10px }}
   .meta{{ color:#888; font-size:13px; margin-bottom:20px }}
-  table{{ width:100%; border-collapse:collapse; font-size:13px }}
+  table{{ width:100%; border-coll:collapse; font-size:13px }}
   th   {{ background:#0f3460; color:#00b5cc; padding:10px; text-align:left; position:sticky; top:0 }}
-  td   {{ padding:8px; border-bottom:1px d #2a2a4a; vertical-align:top }}
+  td   {{ padding:8px; border-bottom:1px solid #2a2a4a; vertical-align:top }}
   tr:hover td {{ background:#1e2a4a }}
   img  {{ max-height:200px; object-fit:cover }}
 </style>
@@ -1837,7 +1839,7 @@ def _generate_compare_html(out_html: Path, dir1: str, dir2: str, results: list):
   DIR 2: {dir2}
 </div>
 <table>
-  <thead><tr><th>Arquivo</th><th>Status</th><th>Diferença</th><th>DIR 1</th><th>DIR 2</th></tr></thead>
+  <thead><tr><th>Arquivo</th><th>Status</th><th>Diferenç><th>DIR 1</th><th>DIR 2</th></tr></thead>
   <tbody>{rows}</tbody>
 </table>
 </body>
@@ -1845,26 +1847,26 @@ def _generate_compare_html(out_html: Path, dir1: str, dir2: str, results: list):
     out_html.write_text(html, encoding="utf-8")
 
 
-# ═════════════════════════════════════════════════════════════
-# RELATÓRIO HTML
 # ══════════════════════════════════════════════════════════════════
+# RELATÓRIO HTML
+# ════════════════════════════════════════════════â══════════
 
 def generate_report(output_dir: Path, env: dict, version_tag: str,
-                    results: list, elapsed: float, log_file: Pathrelatorio.html completo (capa + lista + evidências) + PDF."""
+                    results: list, elapsed: float, log_file: Path):
+    """Gera relatorio.html completo (capa + lista + evidências) + PDF."""
     now      = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     now_file = datetime.now().strftime("%Y%m%d_%H%M%S")
     ok    = sum(1 for r in results if r["status"] == "ok")
     warn  = sum(1 for r in results if r["status"] == "aviso")
-    err   = sum(1 for r in results if r["status"] == "erro")
+    err   = sum(1 for r in res r["status"] == "erro")
     total = ok + warn + err
     ok_pct = int(ok / total * 100) if total else 0
 
-    STATUS_COLOR = {"ok": "#00c896", "aviso": "#ffb300", "erro": "#ff477", "nok": "#ff4757"}
+    STATUS_COLOR = {"ok": "#00c896", "aviso": "#ffb300", "erro": "#ff4757", "nok": "#ff4757"}
     STATUS_ICON  = {"ok": "✓", "aviso": "⚠", "erro": "✗", "nok": "✗"}
     STATUS_LABEL = {"ok": "OK", "aviso": "Aviso", "erro": "Erro", "nok": "NOK"}
 
-    # ── helpers ──────────────────────────────────────────────────
-    def img_b64(path):
+    # ── helpers ────────────────────────────────────────────â    def img_b64(path):
         p = Path(path)
         if p.exists():
             with open(p, "rb") as f:
@@ -1877,13 +1879,13 @@ def generate_report(output_dir: Path, env: dict, version_tag: str,
   <div class="cover-inner">
     <div class="cover-brand">
       <div class="cover-logo-wrap">
-        <span class="cover-logo-n">N</span>OSSIS
+        <span ogo-n">N</span>OSSIS
         <span class="cover-logo-one">ONE</span>
       </div>
       <div class="cover-logo-sub">INVENTORY</div>
     </div>
 
-  cover-divider"></div>
+    <div class="cover-divider"></div>
 
     <h1 class="cover-title">Relatório de Evidências</h1>
     <p class="cover-subtitle">AutoScreen · v7.1</p>
@@ -1893,11 +1895,11 @@ def generate_report(output_dir: Path, env: dict, version_tag: str,
         <span class="cover-meta-label">Ambiente</span>
         <span class="cover-meta-value">{env["name"]}</span>
       </div>
-      <div class="cover-meta-item">
+      <div class="er-meta-item">
         <span class="cover-meta-label">Versão</span>
         <span class="cover-meta-value ver-tag">{version_tag}</span>
       </div>
-      <class="cover-meta-item">
+      <div class="cover-meta-item">
         <span class="cover-meta-label">Gerado em</span>
         <span class="cover-meta-value">{now}</span>
       </div>
@@ -1905,10 +1907,10 @@ def generate_report(output_dir: Path, env: dict, version_tag: str,
         <span class="cover-meta-label">Duração</span>
         <span class="cover-meta-value">{elapsed/60:.1f} min ({elapsed:.0f}s)</span>
       </div>
-      <div class="cover-meta-item full">
+      <div classover-meta-item full">
         <span class="cover-meta-label">Pasta</span>
         <span class="cover-meta-value small">{output_dir.resolve()}</span>
-      </d>
+      </div>
       <div class="cover-meta-item full">
         <span class="cover-meta-label">Autor</span>
         <span class="cover-meta-value">Diego Santos &nbsp;·&nbsp; diego-f-santos@openlabs.com.br</span>
@@ -1918,11 +1920,11 @@ def generate_report(output_dir: Path, env: dict, version_tag: str,
     <div class="cover-stats-row">
       <div class="cover-stat ok">
         <div class="cover-stat-n">{ok}</div>
-        <div class="cover-stat-l">OK</div>
+        <div cass="cover-stat-l">OK</div>
       </div>
       <div class="cover-stat warn">
         <div class="cover-stat-n">{warn}</div>
-        <div class="cover-stat-l">Aisos</div>
+        <div class="cover-stat-l">Avisos</div>
       </div>
       <div class="cover-stat err">
         <div class="cover-stat-n">{err}</div>
@@ -1948,7 +1950,7 @@ def generate_report(output_dir: Path, env: dict, version_tag: str,
     rows = ""
     for i, r in enumerate(results, 1):
         sc    = STATUS_COLOR.get(r["status"], "#888")
-        si    = STATUS_ICON.get(r["status"], "?")
+       S_ICON.get(r["status"], "?")
         sl    = STATUS_LABEL.get(r["status"], r["status"])
         msg   = f'<div class="row-warn">⚠ {r["msg"]}</div>' if r.get("msg") else ""
         rows += f"""
@@ -1958,14 +1960,14 @@ def generate_report(output_dir: Path, env: dict, version_tag: str,
         <td class="td-status">
           <span class="status-pill" style="background:{sc}22;color:{sc};border-color:{sc}">
             {si} {sl}
-          </span>
+          </an>
         </td>
         <td class="td-time">{r.get("time","—")}</td>
       </tr>"""
 
     summary = f"""
 <section class="page-section">
-  <diclass="section-header">
+  <div class="section-header">
     <span class="section-icon">📋</span>
     <span class="section-title">Resumo das Capturas</span>
     <span class="section-count">{total} páginas</span>
@@ -1975,8 +1977,7 @@ def generate_report(output_dir: Path, env: dict, version_tag: str,
       <tr>
         <th style="width:50px">#</th>
         <th>Página</th>
-        <th style="width:110px;text-align:center">Status</th>
-        <th style="width:90px;text-align:center">Tempo</th>
+        <th style="width:110px;text-align:center">Status<       <th style="width:90px;text-align:center">Tempo</th>
       </tr>
     </thead>
     <tbody>{rows}</tbody>
@@ -1984,14 +1985,14 @@ def generate_report(output_dir: Path, env: dict, version_tag: str,
 </section>
 """
 
-   ─ Evidências — 2 por página ────────────────────────────────
+    # ── Evidências — 2 por página ────────────────────────────────
     def build_ev_card(i, r):
         b64     = img_b64(r.get("file", ""))
         img_src = f"data:image/png;base64,{b64}" if b64 else ""
         sc      = STATUS_COLOR.get(r["status"], "#888")
-        si      = STATUS_ICON.get(r["status"], "?")
+        si      = STATUS_ICON.get(r["stat")
         sl      = STATUS_LABEL.get(r["status"], r["status"])
-        msg_div = f'<div class="ev-warn">⚠ {r["msg"]}</div>' if r.get("me ""
+        msg_div = f'<div class="ev-warn">⚠ {r["msg"]}</div>' if r.get("msg") else ""
         if img_src:
             img_html = f'<a href="{img_src}" target="_blank"><img src="{img_src}" class="ev-img"></a>'
         else:
@@ -1999,9 +2000,9 @@ def generate_report(output_dir: Path, env: dict, version_tag: str,
         return f"""<div class="ev-item" id="ev-{i}">
   <div class="ev-header">
     <span class="ev-num">#{i:02d}</span>
-    <span class="ev-title">{r["label"]}</span>
+    <span class="ev-title">{r["lab}</span>
     <span class="ev-pill" style="background:{sc}22;color:{sc};border-color:{sc}">{si} {sl}</span>
-    <span class="ev-time">⏱ {r.geime","—")}</span>
+    <span class="ev-time">⏱ {r.get("time","—")}</span>
     {msg_div}
   </div>
   <div class="ev-img-wrap">{img_html}</div>
@@ -2013,11 +2014,11 @@ def generate_report(output_dir: Path, env: dict, version_tag: str,
     page_num = 3  # capa=1, resumo=2, evidências a partir de 3
     for pair in pairs:
         cards_html = ""
-        for j, r in enumerate(pair):
+      r in enumerate(pair):
             idx = results.index(r) + 1
             cards_html += build_ev_card(idx, r)
         pages_html += f"""
-ass="ev-page" data-page="{page_num}">
+<div class="ev-page" data-page="{page_num}">
   {cards_html}
 </div>
 """
@@ -2034,7 +2035,7 @@ ass="ev-page" data-page="{page_num}">
 {pages_html}
 """
 
-    # ── CSS ────────────────────────────────────────────────────
+    # ─â─────────────────────────────────────────────────────
     css = """
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
 
@@ -2045,12 +2046,11 @@ ass="ev-page" data-page="{page_num}">
       --border:   #252545;
       --cyan:     #00c8e0;
       --cyan2:    #00e5ff;
-      --text:     #e8e8f0;
-      --muted:    #6060a0;
+      --text:        --muted:    #6060a0;
       --ok:       #00c896;
       --warn:     #ffb300;
       --err:      #ff4757;
-      --font:     'Inter';
+      --font:     'Inter', sans-serif;
       --mono:     'JetBrains Mono', monospace;
     }
 
@@ -2061,9 +2061,9 @@ ass="ev-page" data-page="{page_num}">
     /* ── CAPA ── */
     .cover {
       min-height:100vh;
-      background: linear-gradient(160deg, #0b0b18 0%, #090920 40%, #0a1530 100%);
+      background: linear-gradient(160deg, #0b0b18 020 40%, #0a1530 100%);
       display:flex; align-items:center; justify-content:center;
-      padding:60px 40px; position:relative; overfen;
+      padding:60px 40px; position:relative; overflow:hidden;
     }
     .cover::before {
       content:'';
@@ -2149,10 +2149,9 @@ ass="ev-page" data-page="{page_num}">
       display:flex; align-items:center; gap:12px;
       border-bottom:2px solid var(--border); padding-bottom:16px; margin-bottom:24px;
     }
-    .section-icon { font-size:20px }
-    .section-title { font-size:20px; font-weight:700; color:var(--cyan); flex:1 }
+    .section-icon { font-size:20pxection-title { font-size:20px; font-weight:700; color:var(--cyan); flex:1 }
     .section-count {
-      font-size:12px; background:var(-rder:1px solid var(--border);
+      font-size:12px; background:var(--bg3); border:1px solid var(--border);
       border-radius:20px; padding:4px 14px; color:var(--muted);
     }
 
@@ -2160,10 +2159,10 @@ ass="ev-page" data-page="{page_num}">
     .summary-table { width:100%; border-collapse:collapse; font-size:14px }
     .summary-table th {
       background:var(--bg3); color:var(--cyan); padding:12px 16px;
-      font-weight:600; text-align:left; border-bottom:2px solid var(--border);
+      font-weight:600; text-align:left; border-bottom:2px soliborder);
       font-size:12px; text-transform:uppercase; letter-spacing:.5px;
     }
-    .summary-table td { padding:12px 16px; border-bo solid var(--border) }
+    .summary-table td { padding:12px 16px; border-bottom:1px solid var(--border) }
     .summary-table tr:hover td { background:rgba(255,255,255,.02) }
     .td-num { font-family:var(--mono); font-size:12px; color:var(--muted); text-align:center }
     .td-label { font-weight:500 }
@@ -2184,10 +2183,9 @@ ass="ev-page" data-page="{page_num}">
     }
     .ev-item:hover { border-color:var(--cyan) }
 
-    .ev-header {
-      display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+    .ev-head  display:flex; align-items:center; gap:12px; flex-wrap:wrap;
       padding:16px 20px; border-bottom:1px solid var(--border);
-      bacar(--bg3);
+      background:var(--bg3);
     }
     .ev-num {
       font-family:var(--mono); font-size:12px; color:var(--muted);
@@ -2224,13 +2222,12 @@ ass="ev-page" data-page="{page_num}">
     /* ── PAGE BREAK — apenas no print ── */
     .page-break { display:none }
 
-    /* ── PRINT ── */
-    @media print {
+    /* ── PRINT ─edia print {
       body { background:#fff !important; color:#000 !important }
 
       .cover {
         background:#fff !important;
- ight:unset;
+        min-height:unset;
         page-break-after: always !important;
         break-after: page !important;
       }
@@ -2299,20 +2296,20 @@ ass="ev-page" data-page="{page_num}">
         margin: 15mm 12mm 22mm 12mm;
         @bottom-center {
           content: "NOSSIS ONE INVENTORY  ·  Página " counter(page) " de " counter(pages);
-          font-size: 9pt; color: #666; font-family: monospace;
+          font-size: t; color: #666; font-family: monospace;
         }
       }
     }
     """
 
-    # ── Lightbox JS ──────────────â───────────────────────────
+    # ── Lightbox JS ──────────────────────────────────────────────
     js = """
     // Numeração de páginas visível no rodapé (para HTML)
     const totalPages = document.querySelectorAll('.page-break').length + 1;
     document.querySelectorAll('.ev-page').forEach(p => {
       const n = p.dataset.page;
-      const footer = document.createElement('div');
-      footer.style.cssText = 'text-align:center;font-size:11px;color:#6060a0;font-family:monospace;padding:8px 0 4px;border-top:1px soargin-top:8px';
+      const footer = document.creament('div');
+      footer.style.cssText = 'text-align:center;font-size:11px;color:#6060a0;font-family:monospace;padding:8px 0 4px;border-top:1px solid #252545;margin-top:8px';
       footer.textContent = `NOSSIS ONE INVENTORY  ·  Página ${n}`;
       p.appendChild(footer);
     });
@@ -2320,9 +2317,9 @@ ass="ev-page" data-page="{page_num}">
     document.querySelectorAll('.ev-img').forEach(img => {
       img.addEventListener('click', () => {
         const ov = document.createElement('div');
-        ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.95);display:flex;align-items:center;justify-content:center;z-index:9999;cursor:zoom-out;padding:24px';
+        ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.95)isplay:flex;align-items:center;justify-content:center;z-index:9999;cursor:zoom-out;padding:24px';
         const i = document.createElement('img');
-        i.s = img.src;
+        i.src = img.src;
         i.style.cssText = 'max-width:95vw;max-height:95vh;border-radius:10px;box-shadow:0 0 80px rgba(0,200,224,.2)';
         ov.appendChild(i);
         ov.addEventListener('click', () => ov.remove());
@@ -2332,7 +2329,8 @@ ass="ev-page" data-page="{page_num}">
     });
     """
 
-    # ── HTML final ────────────────────────────────────â html = f"""<!DOCTYPE html>
+    # ── HTML final ───────────────────────────────────────────────
+    html = f"""<!DOCTYPE html>
 <html lang="pt" data-env="{env["name"]}" data-version="{version_tag}">
 <head>
 <meta charset="UTF-8">
@@ -2341,8 +2339,7 @@ ass="ev-page" data-page="{page_num}">
 <style>{css}</style>
 </head>
 <body>
-{cover}
-{summary}
+{covemary}
 {evidence}
 <script>{js}</script>
 </body>
@@ -2350,7 +2347,7 @@ ass="ev-page" data-page="{page_num}">
 
     report_path = output_dir / f"relatorio_{now_file}.html"
     report_path.write_text(html, encoding="utf-8")
-    log.info(f"Reio HTML: {report_path}")
+    log.info(f"Relatório HTML: {report_path}")
 
     # ── PDF via Pillow (PNG → PDF direto, sem CSS print, sem Playwright) ──
     pdf_path = None
@@ -2360,12 +2357,12 @@ ass="ev-page" data-page="{page_num}">
 
         pdf_out  = output_dir / f"relatorio_{now_file}.pdf"
 
-        # ABNT NBR 14724 -- Dimensoes e margens
+        # ABNT NBR 14724 --e margens
         # A4: 210 x 297 mm a 150 DPI
         DPI      = 150
         MM       = DPI / 25.4          # pixels por mm
         A4_W     = int(210 * MM)       # ~1240 px
-       = int(297 * MM)       # ~1753 px
+        A4_H     = int(297 * MM)       # ~1753 px
 
         # Margens ABNT (mm -> px)
         M_TOP    = int(30 * MM)        # superior  : 3 cm
@@ -2451,23 +2448,23 @@ ass="ev-page" data-page="{page_num}">
             """Abre PNG e redimensiona para caber em max_w x max_h mantendo proporção."""
             im = PILImage.open(img_path).convert("RGB")
             iw, ih = im.size
-            scale  = min(max_w / iw, max_h / i 1.0)
+            scale  = min(max_w / iw, max_h / ih, 1.0)
             nw, nh = int(iw * scale), int(ih * scale)
             return im.resize((nw, nh), PILImage.LANCZOS)
 
         pages_pil = []  # lista de PILImage prontas para salvar
 
-        # ── CAPA ──────────────────────────────────────────────────
+        # ── CAPA ─────────────────────────────────────â──────────
         img, draw = new_page()
         usable_h  = A4_H - M_TOP - M_BOT - 40
         logo_h    = 120; divider_h = 28; title_h = 80
-        meta_h    = 4 * 6_h = 116; bar_h_blk = 38; gaps = 60
+        meta_h    = 4 * 64; stats_h = 116; bar_h_blk = 38; gaps = 60
         total_content_h = logo_h + divider_h + title_h + meta_h + stats_h + bar_h_blk + gaps
         cy = M_TOP + max(0, (usable_h - total_content_h) // 2)
 
         # Logo
         f_logo = load_font(90, bold=True)
-        draw.text((A4_W//2, cy+50), "NOSSIS", font=f_logo, fill=C_CYAN, anchor="mm")
+        draw.text((A4_W//2, cy+50), "NOSSIS", font=f_logo, fill=, anchor="mm")
         bb_logo = draw.textbbox((0,0), "NOSSIS", font=f_logo)
         logo_right = A4_W//2 + (bb_logo[2]-bb_logo[0])//2 + 10
         draw.text((logo_right, cy+10), "ONE", font=load_font(26, bold=True), fill=C_MUTE)
@@ -2545,9 +2542,9 @@ ass="ev-page" data-page="{page_num}">
         fy = M_TOP
 
         # Header da secao
-        hdr_h = 52
+    hdr_h = 52
         draw.rectangle([MARGIN, fy, A4_W-MARGIN, fy+hdr_h], fill=C_CYAN)
-        draw.text((MARGIN+16, fy+15), "Resumo das Capturas", font=load_font(22, bold=True), fill=(255,255))
+        draw.text((MARGIN+16, fy+15), "Resumo das Capturas", font=load_font(22, bold=True), fill=(255,255,255))
         count_txt = f"{total} paginas"
         bb = draw.textbbox((0,0), count_txt, font=load_font(15))
         draw.text((A4_W-MARGIN-16-(bb[2]-bb[0]), fy+18), count_txt, font=load_font(15), fill=(200,240,245))
@@ -2604,26 +2601,26 @@ ass="ev-page" data-page="{page_num}">
         pages_pil.append(img)
         page_count += 1
 
-        # â EVIDÊNCIAS — 2 por página ─────────────────────────────
+        # ── EVIDÊNCIAS — 2 por página ─────────────────────────────
         IMG_MAX_H = int((A4_H - 2*MARGIN - 160) // 2)  # altura máx por imagem
         IMG_MAX_W = A4_W - 2*MARGIN
 
         for i in range(0, len(results), 2):
             pair = results[i:i+2]
-            img, draw = new_page()
+         img, draw = new_page()
             y = M_TOP
 
             for r in pair:
                 sc  = {"ok": C_OK, "aviso": C_WARN, "erro": C_ERR}.get(r["status"], C_MUTE)
-                si = {"ok": "✓ OK", "aviso": "⚠ Aviso", "erro": "✗ Erro"}.get(r["status"], r["status"])
+                si  = {"ok": "✓ OK", "aviso": "⚠ Aviso", "erro": "✗ Erro"}.get(r["status"], r["status"])
                 idx = results.index(r) + 1
 
                 # cabeçalho do card — mesma cor do header do resumo (C_CYAN)
                 card_h = 40
-                draw.rectangle([M_LEFT, y, A4_W-M_RIGHT, y+card_h], fill=C_CYAN)
-                # numero (#01) em branco semi-transparente
+                draw.rectangle([M_LEFT, y, A4_W-M_RIGHT, y+card_h], fill=C_C            # numero (#01) em branco semi-transparente
                 draw.text((M_LEFT+12, y+12), f"#{idx:02d}", font=load_font(14), fill=(180, 220, 230))
-                # label em               draw.text((M_LEFT+58, y+12), r["label"], font=load_font(15, bold=True), fill=(255, 255, 255))
+                # label em branco
+                draw.text((M_LEFT+58, y+12), r["label"], font=load_font(15, bold=True), fill=(255, 255, 255))
                 # pill de status
                 pill_txt = si
                 bb  = draw.textbbox((0,0), pill_txt, font=load_font(12))
@@ -2631,25 +2628,25 @@ ass="ev-page" data-page="{page_num}">
                 px  = A4_W - M_RIGHT - pw - 12
                 # pill branco com texto colorido — destaque sobre o header ciano
                 draw.rectangle([px, y+8, px+pw, y+32], fill=(255,255,255), outline=(255,255,255))
-              draw.text((px+8, y+12), pill_txt, font=load_font(12, bold=True), fill=sc)
+                draw.text((px+8, y+12), pill_txt, font=load_font(12, bold=True), fill=sc)
                 # tempo à esquerda do pill
                 draw.text((px-75, y+12), r.get("time","—"), font=load_font(12), fill=(180, 220, 230))
                 y += card_h + 2
 
                 # imagem
-                img_path = Path(r.get("file",""))
+                img_path =(r.get("file",""))
                 if img_path.exists():
                     try:
                         thumb = fit_image(img_path, IMG_MAX_W, IMG_MAX_H)
-                        img.pasteumb, (M_LEFT, y))
+                        img.paste(thumb, (M_LEFT, y))
                         y += thumb.size[1] + 12
                     except Exception:
                         draw.rectangle([MARGIN, y, A4_W-MARGIN, y+80], fill=C_BG2, outline=C_LINE)
-                        draw.text((A4_W//2, y+30), "Imagem não disponível", font=load_font(14), fill=C_MUTE, anchor="mm")
+                        draw.text((A4_W//2, y+30), "Imagem não disponível", font=load_font(14), fill=C_MUTE, anchormm")
                         y += 92
                 else:
                     draw.rectangle([MARGIN, y, A4_W-MARGIN, y+80], fill=C_BG2, outline=C_LINE)
-                    draw.text((A4_W/, y+30), "Sem imagem", font=load_font(14), fill=C_MUTE, anchor="mm")
+                    draw.text((A4_W//2, y+30), "Sem imagem", font=load_font(14), fill=C_MUTE, anchor="mm")
                     y += 92
 
                 y += 8  # espaço entre os dois cards
@@ -2659,21 +2656,21 @@ ass="ev-page" data-page="{page_num}">
             page_count += 1
 
         # Corrige numeração do total
-        total_pages = len(pages_pil)
+        total_es = len(pages_pil)
         # Não é possível reescrever rodapés já desenhados em cada PIL —
         # usamos a contagem correta já no loop acima; vamos regenerar apenas
-        # osm total correto re-desenhando por cima
+        # os rodapés com total correto re-desenhando por cima
         # (mais simples: já temos total_pages, basta sobrescrever)
         fp_font = load_font(14)
         for pi, pimg in enumerate(pages_pil):
             pd = ImageDraw.Draw(pimg)
             txt = f"NOSSIS ONE INVENTORY  ·  Página {pi+1} de {total_pages}"
-            bb  = pd.textbbox((0,0), txt, font=fp_font)
+         textbbox((0,0), txt, font=fp_font)
             tw  = bb[2] - bb[0]
             x   = (A4_W - tw) // 2
             y   = A4_H - MARGIN + 10
             # cobre o rodapé anterior com fundo
-        pd.rectangle([0, y-12, A4_W, A4_H], fill=C_BG)
+            pd.rectangle([0, y-12, A4_W, A4_H], fill=C_BG)
             pd.line([(MARGIN, y-8), (A4_W-MARGIN, y-8)], fill=C_LINE, width=1)
             pd.text((x, y), txt, font=fp_font, fill=C_MUTE)
 
@@ -2681,7 +2678,7 @@ ass="ev-page" data-page="{page_num}">
         pages_pil[0].save(
             str(pdf_out),
             save_all=True,
-            append_images=pages_pil[1:],
+            append_imagespages_pil[1:],
             resolution=DPI,
         )
 
@@ -2696,20 +2693,21 @@ ass="ev-page" data-page="{page_num}">
     except Exception as e:
         log.warning(f"PDF não gerado: {e}")
 
-    return report_path, pdf_path
+    return report_path, pdf_
 
 
-# ═════════════════════════════════════════════════════════════IAM
+# ══════════════════════════════════════════════════════════════════
+# LOGIN IAM
 # ══════════════════════════════════════════════════════════════════
 
 def do_login_iam(page: Page, env: dict, output_dir: Path) -> Page | None:
-    iam_url    = env["iam_url"]
+    iam_url    = envl"]
     portal_url = env["portal_url"]
     username   = env["username"]
     password   = env["password"]
 
     if RICH: console.print(f"\n[bold cyan]🔐 Login IAM[/bold cyan]")
-    else: print("\n🔐 Log
+    else: print("\n🔐 Login IAM")
 
     print_info(f"Acessando {iam_url}")
     page.goto(iam_url, wait_until=WAIT_UNTIL, timeout=TIMEOUT)
@@ -2719,13 +2717,13 @@ def do_login_iam(page: Page, env: dict, output_dir: Path) -> Page | None:
         el = page.wait_for_selector("#anotherAccount", timeout=5_000)
         if el:
             print_info("'use another account'")
-            el.click()
+        el.click()
             page.wait_for_load_state(WAIT_UNTIL, timeout=TIMEOUT)
     except Exception:
         pass
 
     print_info(f"Usuário: {username}")
-    page.wait_for_selector("#inputUsername", timeut=TIMEOUT)
+    page.wait_for_selector("#inputUsername", timeout=TIMEOUT)
     page.fill("#inputUsername", username)
 
     print_info("Next")
@@ -2736,7 +2734,7 @@ def do_login_iam(page: Page, env: dict, output_dir: Path) -> Page | None:
         page.wait_for_load_state(WAIT_UNTIL, timeout=TIMEOUT)
 
     print_info("Senha")
-    page.wait_for_selector("#inputPassword", timeout=TIMEOUT)
+    page.wait_forselector("#inputPassword", timeout=TIMEOUT)
     page.fill("#inputPassword", password)
 
     print_info("Login")
@@ -2752,9 +2750,9 @@ def do_login_iam(page: Page, env: dict, output_dir: Path) -> Page | None:
         return None
     print_ok("Login OK")
 
-    # ── Clique no card do módulo no IAM ─────────────────────────
+    # ──e no card do módulo no IAM ─────────────────────────
     module_name  = env.get("module", "").strip()
-    inicio_link  = env.get("inicio_link", "/porta()
+    inicio_link  = env.get("inicio_link", "/portal").strip()
     portal_host  = urlparse(portal_url).netloc
 
     page.wait_for_load_state(WAIT_UNTIL, timeout=TIMEOUT)
@@ -2765,14 +2763,14 @@ def do_login_iam(page: Page, env: dict, output_dir: Path) -> Page | None:
     if module_name:
         print_info(f"Aguardando card '{module_name}'...")
         try:
-            # Tenta encontrar o card pelo nome do módulo (texto do h4 ou título)
+            # Tenta etrar o card pelo nome do módulo (texto do h4 ou título)
             # ou pelo href apontando para o portal_url
             card = None
             for sel in [
-                f"a.thumbnail:has(h4:text-is(odule_name}'))",  # match exato: <a class="thumbnail"><h4>NETWIN</h4>
+                f"a.thumbnail:has(h4:text-is('{module_name}'))",  # match exato: <a class="thumbnail"><h4>NETWIN</h4>
                 f"a.thumbnail:has-text('{module_name}')",          # match parcial dentro do thumbnail
                 f"a:has(h4:text-is('{module_name}'))",             # sem classe thumbnail
-                f"a[href*='{portal_host}']",                       # fallback por URL do portal
+                f"a[href*='{portal_host]",                       # fallback por URL do portal
             ]:
                 try:
                     card = page.wait_for_selector(sel, timeout=5_000)
@@ -2789,16 +2787,16 @@ def do_login_iam(page: Page, env: dict, output_dir: Path) -> Page | None:
                     new_page = new_page_info.value
                     new_page.wait_for_load_state(WAIT_UNTIL, timeout=TIMEOUT)
                 except Exception:
-                    # Sem nova aba — ficou na mea página
+                    # Sem nova aba — ficou na mesma página
                     card.click()
                     page.wait_for_load_state(WAIT_UNTIL, timeout=TIMEOUT)
                     new_page = page
                 debug_shot(new_page, "03_after_module", output_dir)
             else:
-                print_warn(f"Card '{module_name}' não encontrado — navegando direto para portal")
+                print_warn(f"Card '{module_name}' não encontra navegando direto para portal")
                 new_page.goto(portal_url, wait_until=WAIT_UNTIL, timeout=TIMEOUT)
         except Exception as e:
-            print_warn(f"Erro ao clicar no card '{module_na: {e}")
+            print_warn(f"Erro ao clicar no card '{module_name}': {e}")
             new_page = page
 
     # ── Clica no link de início do módulo ────────────────────────
@@ -2806,44 +2804,44 @@ def do_login_iam(page: Page, env: dict, output_dir: Path) -> Page | None:
         print_info(f"Procurando link '{inicio_link}'...")
         try:
             inicio = new_page.wait_for_selector(
-                f"a[href='{inicio_link}'], a[target='_parent'][href='{inicio_link}']",
+          f"a[href='{inicio_link}'], a[target='_parent'][href='{inicio_link}']",
                 timeout=10_000
             )
             if inicio:
-                print_info(f"Clicando '{inicio_link}'...")           inicio.click()
+                print_info(f"Clicando '{inicio_link}'...")
+                inicio.click()
                 new_page.wait_for_load_state(WAIT_UNTIL, timeout=TIMEOUT)
         except Exception:
             # Se não encontrou o link, tenta navegar direto
             try:
                 base = urlparse(portal_url)
-                full_inicio = f"{base.scheme}://{base.netloc}{inicio_link}"
+                full_inicio = f"{base.scheme}://{base.neloc}{inicio_link}"
                 if new_page.url.rstrip("/") != full_inicio.rstrip("/"):
                     new_page.goto(full_inicio, wait_until=WAIT_UNTIL, timeout=TIMEOUT)
-            except Exception:                pass
+            except Exception:
+                pass
 
     return new_page
 
 
 # ══════════════════════════════════════════════════════════════════
 # COLETA DE MENU
-# ══════════════════════════════════════════════════════════════════
+# ═════════════â═════════════════════════════════════
 
-def collect_menu_links(page: Page, portal_url: sist[dict]:
+def collect_menu_links(page: Page, portal_url: str) -> list[dict]:
     """
     Coleta todos os links do menu via JavaScript puro — sem hover, sem espera.
     Passa base_domain e portal_url como argumento JS para evitar f-string
     com expressões regulares (causa SyntaxError no Playwright).
     """
     page.goto(portal_url, wait_until=WAIT_UNTIL, timeout=TIMEOUT)
-    wait_for_page_ready(page, "home")
-
-    base_domain = urlparse(portal_url).netloc
+    wait_for_page_ready(pag base_domain = urlparse(portal_url).netloc
 
     JS = """([baseHost, baseUrl]) => {
         const seen    = new Set();
         const results = [];
 
-        co containers = document.querySelectorAll(
+        const containers = document.querySelectorAll(
             'nav, [class*="menu"], [class*="nav"], [class*="sidebar"], ' +
             '[id*="menu"], [id*="nav"], [id*="sidebar"]'
         );
@@ -2874,8 +2872,8 @@ def collect_menu_links(page: Page, portal_url: sist[dict]:
                 let prevSpace = false;
                 for (let i = 0; i < label.length; i++) {
                     const code = label.charCodeAt(i);
-                    const isSpace = (code === 32 || code === 9 || code === 10 || code === 13);
-                    if (isSpace) { if (!prevSpace && cleanLabel.length > 0) cleanLabel += ' '; prevSce = true; }
+                    const isSpace =code === 32 || code === 9 || code === 10 || code === 13);
+                    if (isSpace) { if (!prevSpace && cleanLabel.length > 0) cleanLabel += ' '; prevSpace = true; }
                     else { cleanLabel += label[i]; prevSpace = false; }
                 }
                 cleanLabel = cleanLabel.trim();
@@ -2891,13 +2889,13 @@ def collect_menu_links(page: Page, portal_url: sist[dict]:
         raw_links = page.evaluate(JS, [base_domain, portal_url])
     except Exception as e:
         log.warning(f"collect_menu_links JS falhou: {e} — usando fallback Playwright")
-      raw_links = []
+        raw_links = []
         # Fallback: usa query_selector_all do Playwright
         for anchor in page.query_selector_all(SELECTOR_MENU):
             href  = anchor.get_attribute("href") or ""
             label = (anchor.inner_text() or href).strip()
             if not href or href in ("#", "") or href.startswith("javascript"):
-                continue
+                contue
             full_url = urljoin(portal_url, href)
             if label:
                 raw_links.append({"label": label, "url": full_url})
@@ -2914,17 +2912,16 @@ def collect_menu_links(page: Page, portal_url: sist[dict]:
     log.info(f"Menu coletado: {len(links)} links")
     return links
 
-# ════════════════════════════════════════════════════════â════════
+# ════════════════════════════════════════════════════════════
 # MAIN
 # ══════════════════════════════════════════════════════════════════
 
 def run_single(args, env_key: str, env: dict):
     """Executa captura para um único ambiente."""
-    portal_url = env["portal_url"]
-    log_file   = setup_logger(env_key)
+    portal_url = env["portal_url"og_file   = setup_logger(env_key)
     log.info(f"Portal  : {env['portal_url']}")
     log.info(f"IAM     : {env['iam_url']}")
-    log.inforio : {env['username']}")
+    log.info(f"Usuário : {env['username']}")
 
 
 def main():
@@ -2937,10 +2934,10 @@ def main():
 
     # --all-envs: roda todos os módulos de todos os sistemas
     if args.all_envs:
-        envs_to_run = {k: v for k, v in ENVIRONMENTS.items() if "-" in k}
+        envs_to_run = {k: v for k, v in ENVIRONMENTS.items() if "-
         if RICH:
             console.print(f"\n[bold cyan]🌍 Executando todos os módulos ({len(envs_to_run)})...[/bold cyan]\n")
-     v_key, env in envs_to_run.items():
+        for env_key, env in envs_to_run.items():
             if RICH:
                 console.print(f"\n[bold yellow]{'='*50}[/bold yellow]")
                 console.print(f"[bold]► {env['name']}[/bold]\n")
@@ -2949,22 +2946,21 @@ def main():
             args.env = env_key
             try:
                 _run_env(args, env_key, env)
-            except SystemExit:
+     except SystemExit:
                 print_warn(f"{env_key} falhou — continuando...")
                 continue
         return
 
-    env_kv = select_environment(args)
+    env_key, env = select_environment(args)
 
     # Opção "Todos os módulos" selecionada no menu interativo
     if getattr(args, "_run_all_modules", False):
         sys_key  = args.__dict__.get("_system_key", "")
         system   = SYSTEMS.get(sys_key, {})
         mod_envs = {f"{sys_key}-{k}": ENVIRONMENTS[f"{sys_key}-{k}"]
-                    for k in system.get("modules", {})
-                    if f"{sys_key}-{k}" in ENVIRONMENTS}
+                    for k in system.get("modules", {}                 if f"{sys_key}-{k}" in ENVIRONMENTS}
         if RICH:
-            console.print(f"\n[bold cyan]🌍 Todos os módulos de {syet('name',sys_key)} ({len(mod_envs)})...[/bold cyan]\n")
+            console.print(f"\n[bold cyan]🌍 Todos os módulos de {system.get('name',sys_key)} ({len(mod_envs)})...[/bold cyan]\n")
         for ek, ev in mod_envs.items():
             if RICH:
                 console.print(f"\n[bold yellow]{'='*50}[/bold yellow]")
@@ -2972,11 +2968,11 @@ def main():
             else:
                 print(f"\n{'='*50}\n► {ev['name']}\n")
             args.env = ek
-            try:
+        :
                 _run_env(args, ek, ev)
             except SystemExit:
                 print_warn(f"{ek} falhou — continuando...")
-          continue
+                continue
         return
 
     _run_env(args, env_key, env)
@@ -2990,11 +2986,11 @@ def _run_env(args, env_key: str, env: dict):
     log.info(f"IAM     : {env['iam_url']}")
     log.info(f"Usuário : {env['username']}")
     if args.dry_run: log.info("Modo: DRY-RUN")
-    if args.page:    log.info(f"Filtro de página: {args.page}")
+ if args.page:    log.info(f"Filtro de página: {args.page}")
 
     show_banner(env, Path(f"nossis_prints_{env_key}"))
 
-    # Valida conectivida antes de iniciar (detecta VPN desconectada)
+    # Valida conectividade antes de iniciar (detecta VPN desconectada)
     if not args.dry_run:
         validate_connectivity(env)
 
@@ -3006,9 +3002,9 @@ def _run_env(args, env_key: str, env: dict):
         # Tenta reusar sessão salva
         saved_session = None if args.no_session else load_session(env_key)
         if saved_session:
-            session_file = SESSION_DIR / f"session_{env_key}.json"
+            ssion_file = SESSION_DIR / f"session_{env_key}.json"
             age_min = int((time.time() - session_file.stat().st_mtime) // 60)
-            emaining = int(SESSION_TTL // 60) - age_min
+            remaining = int(SESSION_TTL // 60) - age_min
             print_ok(f"Sessão salva encontrada ({age_min} min — expira em {remaining} min) — pulando login")
             context = _new_optimized_context(browser, saved_session)
         else:
@@ -3016,11 +3012,11 @@ def _run_env(args, env_key: str, env: dict):
 
         page = context.new_page()
 
-        # Console listener para detectar erros HTTP 4xx/5xx
+        # Console listener para detecrros HTTP 4xx/5xx
         current_label = [""]
         http_errors_map = {}
         def on_response(response):
-            if response.stat 400:
+            if response.status >= 400:
                 lbl = current_label[0]
                 msg = f"HTTP {response.status}: {response.url[:80]}"
                 http_errors_map.setdefault(lbl, []).append(msg)
@@ -3033,7 +3029,7 @@ def _run_env(args, env_key: str, env: dict):
 
         # Login (pula se sessão válida)
         try:
-          temp_dir = Path(f"nossis_prints_{env_key}_temp")
+            temp_dir = Path(f"nossis_prints_{env_key}_temp")
             temp_dir.mkdir(exist_ok=True)
             if saved_session:
                 # Verifica se sessão ainda é válida navegando para o portal
@@ -3041,36 +3037,37 @@ def _run_env(args, env_key: str, env: dict):
                     # Captura todos os status HTTP durante o goto
                     responses_401 = []
 
-                    def _on_response(response):
+                    def _on_respresponse):
                         if response.status in (401, 403):
                             responses_401.append(response.url)
 
-                 page.on("response", _on_response)
+                    page.on("response", _on_response)
                     page.goto(env['portal_url'], wait_until="domcontentloaded", timeout=30_000)
                     page.wait_for_timeout(1500)  # aguarda respostas assíncronas
                     page.remove_listener("response", _on_response)
 
-                    # Sessão inválida se: redirecionou para login OU algum 401/403
+                    # Sessão inválida se: redirecionou para login OU algum 4003
                     portal_url_host = env['portal_url'].split("/portal")[0]
-                    got_401 = any(portal_url_host in u for u iesponses_401)
+                    got_401 = any(portal_url_host in u for u in responses_401)
 
                     if 'idp/login' in page.url or 'login' in page.url.lower() or got_401:
                         reason = f"HTTP 401 em {len(responses_401)} request(s)" if got_401 else "redirecionado para login"
                         print_warn(f"Sessão expirada ({reason}) — fazendo login novamente...")
-                        log.warning(f"Sessão inválida: {reason}")
+                        log.warning(f"Sessinválida: {reason}")
                         clear_session(env_key)
-                        portal_page = do_login_iam(page, env, temp_dir)                    if portal_page:
+                        portal_page = do_login_iam(page, env, temp_dir)
+                        if portal_page:
                             save_session(context, env_key)
                     else:
                         portal_page = page
                         print_ok(f"Portal acessível via sessão: {page.url}")
                 except Exception:
                     clear_session(env_key)
-                    portal_page = do_login_iam(page, env, temp_dir)
+                    portal_page = do_login_iam(e, env, temp_dir)
                     if portal_page:
                         save_session(context, env_key)
             else:
-               ortal_page = do_login_iam(page, env, temp_dir)
+                portal_page = do_login_iam(page, env, temp_dir)
                 # Salva sessão após login bem-sucedido
                 if portal_page:
                     save_session(context, env_key)
@@ -3080,11 +3077,11 @@ def _run_env(args, env_key: str, env: dict):
                 browser.close()
                 sys.exit(1)
         except KeyboardInterrupt:
-            browser.close()
+          browser.close()
             sys.exit(0)
         except Exception as e:
             print_err(f"Exceção no login: {e}")
-            browserse()
+            browser.close()
             sys.exit(1)
 
         # Modal Sobre — extrai versão
@@ -3094,19 +3091,19 @@ def _run_env(args, env_key: str, env: dict):
         version_tag  = "unknown"
         MAX_SOBRE_ATTEMPTS = 3  # tentativas para abrir o modal e extrair versão
 
-        for sobre_attempt in range(1, MAX_SOBRE_ATTEMPTS + 1):
+        for sobre_attempt i MAX_SOBRE_ATTEMPTS + 1):
             try:
                 if sobre_attempt > 1:
-                    print_info(f"Tentativa {sobre_attem_SOBRE_ATTEMPTS} para capturar modal 'Sobre'...")
+                    print_info(f"Tentativa {sobre_attempt}/{MAX_SOBRE_ATTEMPTS} para capturar modal 'Sobre'...")
                     # Fecha modal anterior se ainda estiver aberto
                     try:
                         portal_page.keyboard.press("Escape")
                         portal_page.wait_for_timeout(500)
                     except Exception:
                         pass
-                    # Recarrega a página para garantir estado limpo
+                    # Recarrega a págin para garantir estado limpo
                     portal_page.reload(wait_until="domcontentloaded", timeout=TIMEOUT)
-                    portal_pge.wait_for_timeout(2000)
+                    portal_page.wait_for_timeout(2000)
 
                 # Garante que o portal está carregado
                 portal_page.wait_for_load_state("domcontentloaded", timeout=TIMEOUT)
@@ -3115,11 +3112,11 @@ def _run_env(args, env_key: str, env: dict):
                 # Tenta clicar no link "Sobre" de várias formas
                 clicked = False
                 for selector in [
-                    "a:has-text('Sobre')",
+                  "a:has-text('Sobre')",
                     "span:has-text('Sobre')",
                     "text=Sobre",
                     "[href*='sobre']",
-              ]:
+                ]:
                     try:
                         portal_page.click(selector, timeout=3_000)
                         clicked = True
@@ -3140,9 +3137,10 @@ def _run_env(args, env_key: str, env: dict):
 
                 # Aguarda o modal — tenta vários seletores
                 modal_visible = False
-                for modal_sel in ["#nossis-modal", ".modal.in", ".modal[style*='display: block']", ".modal.show"]:
+                for modal_sel in ["#nossis-modal", ".modal.in", ".modal[style*='display: bl']", ".modal.show"]:
                     try:
-                        portal_page.wait_for_selector(modal_sel, state="visible", timeout=5_000                       modal_visible = True
+                        portal_page.wait_for_selector(modal_sel, state="visible", timeout=5_000)
+                        modal_visible = True
                         break
                     except Exception:
                         continue
@@ -3150,34 +3148,36 @@ def _run_env(args, env_key: str, env: dict):
                 if not modal_visible:
                     log.warning(f"Modal 'Sobre' não apareceu na tentativa {sobre_attempt}")
                     if sobre_attempt < MAX_SOBRE_ATTEMPTS:
-                        continue  # tenta novamente
+                        continue # tenta novamente
 
                 # Extrai a versão — varre TODO o texto do modal procurando padrão X.Y.Z
-                version_raw = "              # 1. Seletores específicos conhecidos
+                version_raw = ""
+
+                # 1. Seletores específicos conhecidos
                 for ver_sel in [".fx-suite-desc p", ".fx-suite-desc", ".modal-body p",
                                 ".modal-body", ".modal-content", "[class*='version']",
                                 "[class*='suite']", "[class*='about']"]:
                     try:
-                        version_raw = portal_page.evaluate(f"""
+                        version_raw = p_page.evaluate(f"""
                             () => {{
                                 const el = document.querySelector('{ver_sel}');
-                               return el ? el.innerText.trim() : '';
+                                return el ? el.innerText.trim() : '';
                             }}
                         """)
                         if version_raw and re.search(r'[0-9]+\.[0-9]+', version_raw):
                             log.info(f"Versão via seletor '{ver_sel}': {version_raw[:80]}")
                             break
-                    except Exception:
+                    except Excepion:
                         continue
 
                 # 2. Varre todos os modais visíveis
-                if not version_raw or not re.search'[0-9]+\.[0-9]+', version_raw):
+                if not version_raw or not re.search(r'[0-9]+\.[0-9]+', version_raw):
                     version_raw = portal_page.evaluate("""
                         () => {
                             const modals = document.querySelectorAll(
                                 '.modal, [role="dialog"], [id*="modal"], [class*="modal"]'
                             );
-                            for (const m of modals) {
+                            for (const m of modals) 
                                 const style = window.getComputedStyle(m);
                                 if (style.display !== 'none' && style.visibility !== 'hidden') {
                                     return m.innerText || m.textContent || '';
@@ -3188,8 +3188,8 @@ def _run_env(args, env_key: str, env: dict):
                     """)
 
                 # 3. Último fallback — busca na página inteira
-                if not version_raw or not re.search(r'[0-9]+\.[0-9]+\.[0-9]+', version_raw):
-                    all_text = portal_page.evaluate("() => document.body ? document.body.iText : ''")
+                if not version_raw or ne.search(r'[0-9]+\.[0-9]+\.[0-9]+', version_raw):
+                    all_text = portal_page.evaluate("() => document.body ? document.body.innerText : ''")
                     m = re.search(
                         r'(?:vers[aã]o|version|v\.tal|tag)[\s:]+([0-9]+\.[0-9]+\.[0-9]+[\w\-\.]*)',
                         all_text, re.IGNORECASE
@@ -3197,46 +3197,48 @@ def _run_env(args, env_key: str, env: dict):
                     if m:
                         version_raw = m.group(0)
 
-                if version_raw and re.search(r'[0-9]+\.[0-9]+\.[0-9]+', version_raw):
+                if version_raw and re.search(r'[0-9]+\.[0-9]+\.[0-9]+', vesion_raw):
                     match = re.search(r'[0-9]+\.[0-9]+\.[0-9]+[\w\-\.]*', version_raw)
                     if match:
-                       version_tag = match.group(0)
+                        version_tag = match.group(0)
                     log.info(f"Versão detectada na tentativa {sobre_attempt}: {version_tag}")
                     print_ok(f"Versão: {version_tag}")
                     break  # versão encontrada — sai do loop de tentativas
 
                 # Versão não encontrada nessa tentativa
-                log.warning(f"Versão não encontrada na tentativa {sobre_attempt}/{MAX_SOBRE_ATTEMPTS}")
+                log.warning(f"Versão não a na tentativa {sobre_attempt}/{MAX_SOBRE_ATTEMPTS}")
                 if sobre_attempt == MAX_SOBRE_ATTEMPTS:
-                    # Salara debug na última tentativa
+                    # Salva HTML para debug na última tentativa
                     try:
                         debug_html = portal_page.evaluate("""
                             () => {
                                 const m = document.querySelector('.modal, [role=\"dialog\"]');
                                 return m ? m.outerHTML : document.body.innerHTML.substring(0, 3000);
-                            }
+                           }
                         """)
-                        Path(output_dir / "debug_modal.html").write_text(debug_html or "", encoding="ut-8")
+                        Path(output_dir / "debug_modal.html").write_text(debug_html or "", encoding="utf-8")
                         log.warning("HTML do modal salvo em debug_modal.html")
                     except Exception:
                         pass
                     print_warn(f"Versão não encontrada após {MAX_SOBRE_ATTEMPTS} tentativas — usando 'unknown'")
 
             except Exception as e:
-                log.warning(f"Tentativa {sobre_attempt}/{MAX_SOBRE_ATTEMPTS} falhou: {e}")
+                log.warning(f"Tentativa {sobre_attempt}/{MAX_SOTTEMPTS} falhou: {e}")
                 if sobre_attempt == MAX_SOBRE_ATTEMPTS:
-                    print_warn(f"Versão não detectada: {e}     # Define pasta com versão
+                    print_warn(f"Versão não detectada: {e}")
+
+        # Define pasta com versão
         base_dir = Path(f"nossis_prints_{env_key}_{version_tag}")
         if base_dir.exists():
             ts         = datetime.now().strftime("%Y%m%d_%H%M%S")
             output_dir = Path(f"{base_dir}_{ts}")
             print_warn(f"Pasta já existe — criando: {output_dir.name}")
         else:
-            output_dir = base_dir
-        output_dir.mkdir(parents=True, exist_ok=True)
+            output_dir = base_dir   output_dir.mkdir(parents=True, exist_ok=True)
         log.info(f"Saída: {output_dir.resolve()}")
 
-        # Move debug shots da pasta te      for f in temp_dir.glob("*.png"):
+        # Move debug shots da pasta temp
+        for f in temp_dir.glob("*.png"):
             f.rename(output_dir / f.name)
         try: temp_dir.rmdir()
         except Exception: pass
@@ -3245,7 +3247,7 @@ def _run_env(args, env_key: str, env: dict):
         try:
             sobre_path = output_dir / "00_sobre.png"
             portal_page.screenshot(path=str(sobre_path), full_page=True)
-            add_timestamp_watermark(sobre_path, "Sobre")
+            add_timestamp_watermark(sobre_path, "Sobre"
             print_ok("00_sobre.png")
             try:
                 portal_page.click("button[data-dismiss='modal']")
@@ -3258,9 +3260,9 @@ def _run_env(args, env_key: str, env: dict):
             print_warn(f"Sobre não capturado: {e}")
 
         # Coleta links
-        if RICH: console.print(f"\n[bold cyan]🔍 Coletando links do menu...[/bold cyan]")
+       if RICH: console.print(f"\n[bold cyan]🔍 Coletando links do menu...[/bold cyan]")
         else: print("\n🔍 Coletando links do menu...")
-   links = collect_menu_links(portal_page, portal_url)
+        links = collect_menu_links(portal_page, portal_url)
 
         # Aplica filtro --page
         page_filter = [p.strip().lower() for p in args.page.split(",")] if args.page else None
@@ -3268,24 +3270,24 @@ def _run_env(args, env_key: str, env: dict):
         # Tabela de links
         if RICH:
             table = Table(box=box.ROUNDED, border_style="cyan", show_header=True,
-                          header_style="bold cyan", padding=(0, 2))
+                          header_style="bold cyan", padd(0, 2))
             table.add_column("#",      justify="right",  width=4,  style="dim")
             table.add_column("Label",  justify="left",   width=32)
             table.add_column("Status", justify="center", width=14)
             for i, item in enumerate(links, 1):
                 skip     = should_skip(item["label"], item["url"], portal_url)
                 filtered = page_filter and not any(f in item["label"].lower() for f in page_filter)
-                if skip:         status = "[dim]⏭ ignorar[/dim]"
+                if skip:         status = "[dim]⏭ ignorar[/di"
                 elif filtered:   status = "[dim]⏭ filtrado[/dim]"
                 else:            status = "[green]✓ capturar[/green]"
-          style = "dim" if (skip or filtered) else "white"
+                style = "dim" if (skip or filtered) else "white"
                 table.add_row(str(i), f"[{style}]{item['label']}[/{style}]", status)
             console.print(table)
         else:
             for i, item in enumerate(links, 1):
                 skip     = should_skip(item["label"], item["url"], portal_url)
-                filtered = page_filter and not any(f in item["label"].lower() for f in page_filter)
-                status   = "⏭ ignorar" if skip else ("⏭ filtrado" if filtered else "✓ ca")
+                filtered = page_filter and not(f in item["label"].lower() for f in page_filter)
+                status   = "⏭ ignorar" if skip else ("⏭ filtrado" if filtered else "✓ capturar")
                 print(f"  {i:>2}. {item['label']:<32} {status}")
 
         to_capture = [
@@ -3295,10 +3297,10 @@ def _run_env(args, env_key: str, env: dict):
         ]
 
         # --since: remove páginas que não mudaram
-        if args.since:
+        if ce:
             since_dir = Path(args.since)
             if not since_dir.exists():
-                print_warn(f"--since: pasta não encontrad{since_dir}")
+                print_warn(f"--since: pasta não encontrada: {since_dir}")
             else:
                 ref_hashes = load_hashes(since_dir)
                 before = len(to_capture)
@@ -3307,8 +3309,8 @@ def _run_env(args, env_key: str, env: dict):
                 log.info(f"--since ativo: {since_dir}")
 
         if RICH:
-            console.print(f"\n[bold]📋 {len(to_capture)} páginas para capturar[/bold] [dim](de {len(links)} encontradas)[/dim]")
-            if args.dun:
+          console.print(f"\n[bold]📋 {len(to_capture)} páginas para capturar[/bold] [dim](de {len(links)} encontradas)[/dim]")
+            if args.dry_run:
                 console.print(f"\n[bold yellow]⚡ DRY-RUN — nenhuma captura será feita.[/bold yellow]\n")
         else:
             print(f"\n📋 {len(to_capture)} para capturar (de {len(links)})")
@@ -3319,21 +3321,21 @@ def _run_env(args, env_key: str, env: dict):
             return
 
         if not to_capture:
-            print_warn("Nenhuma página para capturar.")
+     _warn("Nenhuma página para capturar.")
             browser.close()
             return
 
-        # ── Captura: paralela ou sequencia──────────
+        # ── Captura: paralela ou sequencial ──────────────────────
         capture_results = []
         errors          = []
         n_threads       = calc_threads(len(to_capture))
         session_file    = SESSION_DIR / f"session_{env_key}.json"
 
         if n_threads > 1:
-            # ── MODO PARALELO ─────────────────────────────────────
+            # ── MODO PARALELO ────────────────────────────────────
             # fecha o portal_page do thread principal — workers abrem os seus
             portal_page.close()
-            con.close()
+            context.close()
             browser.close()
 
             capture_results = parallel_capture(
@@ -3343,26 +3345,26 @@ def _run_env(args, env_key: str, env: dict):
             errors = [(r["label"], "", r["msg"])
                       for r in capture_results if r["status"] == "erro"]
 
-            # Exibe resumo do que foi capturado
+          mo do que foi capturado
             if RICH:
                 for r in capture_results:
-                    icon  = "✓" if r["status"] == "ok" else ("⚠" if ratus"] == "aviso" else "✗")
+                    icon  = "✓" if r["status"] == "ok" else ("⚠" if r["status"] == "aviso" else "✗")
                     color = "green" if r["status"] == "ok" else ("yellow" if r["status"] == "aviso" else "red")
                     console.print(f"  [{color}]{icon}[/{color}] {r['label']:<35} {r['time']}")
             else:
                 for r in capture_results:
-                    icon = "✓" if r["status"] == "ok" else ("⚠" if r["status"] == "aviso" else "✗")
+                    icon = "✓" if r["status"] == e ("⚠" if r["status"] == "aviso" else "✗")
                     print(f"  {icon} {r['label']:<35} {r['time']}")
 
-            # Marca que browser já foi            browser_closed = True
+            # Marca que browser já foi fechado
+            browser_closed = True
 
         else:
             # ── MODO SEQUENCIAL ───────────────────────────────────
             browser_closed = False
             if RICH:
-                with Progress(SpinnerColumn(), TextColumn("[bold cyan]{task.description}[/bold cyan]"),
-                              BarColumn(bar_width=30), TaskProgressColumn(),
-                              TextColumn("[dim]{task.fields[label]}[/dim]"), consoleas progress:
+                with Progress(SpinnerColumn(), TextColumn("[bold cyan]{task.description}[/bold cyan]                   BarColumn(bar_width=30), TaskProgressColumn(),
+                              TextColumn("[dim]{task.fields[label]}[/dim]"), console=console) as progress:
                     task = progress.add_task("Capturando", total=len(to_capture), label="")
                     for i, item in enumerate(to_capture, 1):
                         label    = item["label"]
@@ -3376,22 +3378,23 @@ def _run_env(args, env_key: str, env: dict):
                         ok, msg = capture_with_retry(portal_page, url, filepath, label, args.retries)
                         elapsed_p = time.time() - t0
                         if ok:
-                            add_timestamp_watermark(filepath, label)
+                            add_timestamp_watermark(filepath, lel)
                             log.info(f"[{i}/{len(to_capture)}] ✓ {filename} ({elapsed_p:.1f}s) {msg}")
-                            http_err = http_errorp.get(label, [])
+                            http_err = http_errors_map.get(label, [])
                             extra_msg = (" | " + "; ".join(http_err[:2])) if http_err else ""
                             status = "aviso" if (msg.startswith("AVISO") or http_err) else "ok"
                             final_msg = (msg if msg.startswith("AVISO") else "") + extra_msg
-                            capture_results.append({"label": label, "file": str(filepath),
+                            capture_results.append"label": label, "file": str(filepath),
                                                     "status": status, "time": f"{elapsed_p:.1f}s",
                                                     "msg": final_msg.strip(" |").strip()})
                         else:
                             log.error(f"[{i}/{len(to_capture)}] ✗ {label}: {msg}")
                             errors.append((label, url, msg))
                             capture_results.append({"label": label, "file": str(filepath),
-                                                    "status": "erro", "time": f"{elapsed_p:.1f}s", "msg": msg})
+                                                  "status": "erro", "time": f"{elapsed_p:.1f}s", "msg": msg})
                         progress.advance(task)
-            else:               for i, item in enumerate(to_capture, 1):
+            else:
+                for i, item in enumerate(to_capture, 1):
                     label    = item["label"]
                     url      = item["url"]
                     filename = f"{i:02d}_{sanitize(label)}.png"
@@ -3412,18 +3415,18 @@ def _run_env(args, env_key: str, env: dict):
                                                 "status": status, "time": f"{elapsed_p:.1f}s",
                                                 "msg": final_msg.strip(" |").strip()})
                     else:
-                        print(f"✗ ERRO ({args.retries} tentativas)")
+                      print(f"✗ ERRO ({args.retries} tentativas)")
                         errors.append((label, url, msg))
-                        capture_resuappend({"label": label, "file": str(filepath),
+                        capture_results.append({"label": label, "file": str(filepath),
                                                 "status": "erro", "time": f"{elapsed_p:.1f}s", "msg": msg})
 
         # Adiciona o Sobre ao relatório
         sobre_path = output_dir / "00_sobre.png"
         capture_results.insert(0, {"label": "Sobre", "file": str(sobre_path),
-                                   "status": "ok" if sobre_path.exists() else "erro",
+                                "status": "ok" if sobre_path.exists() else "erro",
                                    "time": "—", "msg": ""})
 
-        # Fecha browser se ainda não fechado (modo sequencial)
+        # Fecha browser se ainda não foi fechado (modo sequencial)
         if not browser_closed:
             portal_page.close()
             context.close()
@@ -3432,11 +3435,12 @@ def _run_env(args, env_key: str, env: dict):
     # Gera relatório HTML
     elapsed  = time.time() - start_time
     rep_path, pdf_path = generate_report(output_dir, env, version_tag, capture_results, elapsed, log_file)
-    print_ok(f"Relatório HTML: {rep_path}")
+    print_ok(f"Relatório HTMLp_path}")
     if pdf_path:
         print_ok(f"Relatório PDF : {pdf_path}")
     else:
-        print_info("PDF não gerado — instale Pillow: pip3 install Pil
+        print_info("PDF não gerado — instale Pillow: pip3 install Pillow")
+
     # Gera README.txt
     readme_path = generate_readme(output_dir, env, version_tag, capture_results, elapsed, rep_path, pdf_path)
     print_ok(f"README       : {readme_path}")
@@ -3444,7 +3448,7 @@ def _run_env(args, env_key: str, env: dict):
     # Resumo final
     total = len(capture_results)
     ok    = sum(1 for r in capture_results if r["status"] == "ok")
-    warn  = sum(1 for r in capture_results if r["status"] == "aviso")
+    warn  = sum(1 for r in capture_results if r["us"] == "aviso")
     err   = sum(1 for r in capture_results if r["status"] == "erro")
 
     log.info("=" * 70)
@@ -3456,17 +3460,17 @@ def _run_env(args, env_key: str, env: dict):
         summary = (
             f"[bold cyan]Ambiente  :[/bold cyan] {env['name']}  [dim]v{version_tag}[/dim]\n"
             f"[bold green]✓ OK      :[/bold green] {ok}/{total}\n"
-            f"[bold yellow]⚠ Avisos  :[/bold yellow] {warn}\n"
+            f"[bold yellow]⚠   :[/bold yellow] {warn}\n"
             f"[bold red]✗ Erros   :[/bold red] {err}\n"
-            f"[bold cyan]⏱ Duração :[/bold cyan] {elapsed/60:.1fsed:.0f}s)\n"
+            f"[bold cyan]⏱ Duração :[/bold cyan] {elapsed/60:.1f} min ({elapsed:.0f}s)\n"
             f"[bold cyan]📁 Pasta   :[/bold cyan] {output_dir.resolve()}\n"
             f"[bold cyan]📊 HTML      :[/bold cyan] {rep_path}\n"
             f"[bold cyan]📄 PDF       :[/bold cyan] {pdf_path or 'pip3 install Pillow'}\n"
             f"[bold cyan]📋 Log     :[/bold cyan] {log_file.resolve()}\n"
-            f"[bold cyan]📝 README  :[/bold cyan] {readme_path}"
+            f"[boDME  :[/bold cyan] {readme_path}"
         )
         console.print(Panel(summary, title="[bold white]✅ Concluído[/bold white]",
-                    r_style="green", padding=(1, 2)))
+                            border_style="green", padding=(1, 2)))
     else:
         print(f"\n{'═'*60}")
         print(f"  ✓ OK      : {ok}/{total}")
@@ -3474,7 +3478,7 @@ def _run_env(args, env_key: str, env: dict):
         print(f"  ✗ Erros   : {err}")
         print(f"  ⏱ Duração : {elapsed/60:.1f} min")
         print(f"  📁 Pasta  : {output_dir.resolve()}")
-        print(f"  📊 HTML    : {rep_path}")
+        print(f"  📊 HTML    :ep_path}")
         print(f"  📄 PDF     : {pdf_path or 'pip3 install Pillow'}")
         print(f"{'═'*60}\n")
 
